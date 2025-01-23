@@ -1,0 +1,11 @@
+.input {
+  padding: 5px 10px 5px 2px;
+  border-bottom: 1px solid lightgray;
+  width: 100%;
+  &__search {
+    width: 100%;
+    background: none;
+    border: none;
+    outline: none;
+  }
+}
