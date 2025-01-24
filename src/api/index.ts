@@ -51,3 +51,16 @@ export const fetchEditTodo = async (
     throw Error();
   }
 };
+
+export const fetchDeleteTodo = async (id: number) => {
+  try {
+    const res = await fetch(`${BASE_URL}/todos/${id}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+  } catch (error) {
+    throw Error();
+  }
+};

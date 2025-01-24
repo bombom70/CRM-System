@@ -13,6 +13,7 @@ export const Form: FC<Props> = ({ getData }) => {
 
   const createTodo = async (e: SyntheticEvent) => {
     e.preventDefault();
+    if (!value.length) return;
     const data = {
       isDone: false,
       title: value,

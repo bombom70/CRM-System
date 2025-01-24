@@ -5,7 +5,7 @@ import { Input } from '../Input';
 import basketLogo from '../../assets/basket.svg';
 import editLogo from '../../assets/edit.svg';
 import style from './TodoItem.module.scss';
-import { fetchEditTodo } from '../../api';
+import { fetchDeleteTodo, fetchEditTodo } from '../../api';
 import { Todo } from '../../shared/types.ts';
 
 type Props = {
@@ -24,9 +24,19 @@ export const TodoItem: FC<Props> = ({ todo, changeDoneTodo, getData }) => {
         title,
         isDone: todo.isDone,
       });
-      await getData(), setIsEdits(false);
+      await getData();
+      setIsEdits(false);
     } catch (error) {
       alert('OOops, Failed to save');
+    }
+  };
+
+  const deleteTodo = async (id: number) => {
+    try {
+      await fetchDeleteTodo(id);
+      await getData();
+    } catch (error) {
+      alert('OOops, Failed to delete todo');
     }
   };
 
@@ -53,7 +63,7 @@ export const TodoItem: FC<Props> = ({ todo, changeDoneTodo, getData }) => {
         <Button onClick={() => setIsEdits(true)}>
           <img src={editLogo} />
         </Button>
-        <Button variant="danger">
+        <Button variant="danger" onClick={() => deleteTodo(+todo.id)}>
           <img src={basketLogo} />
         </Button>
       </div>
