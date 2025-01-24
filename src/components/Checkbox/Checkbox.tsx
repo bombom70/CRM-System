@@ -4,11 +4,11 @@ import { Todo } from '../../shared/types';
 
 type Props = {
   todo: Todo;
-  changeDoneTodo: (todo: Todo, done: boolean) => void;
+  changeDoneTodo: (todo: Todo, isDone: boolean) => void;
 };
 
 export const Checkbox: FC<Props> = ({ todo, changeDoneTodo }) => {
-  const [checked, setChecked] = useState(todo.done);
+  const [checked, setChecked] = useState(todo.isDone);
 
   const handleChange = () => {
     setChecked((prev) => !prev);
