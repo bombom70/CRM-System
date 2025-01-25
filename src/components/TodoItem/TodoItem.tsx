@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Checkbox } from '../Checkbox';
+import { TodoStatusToggler } from '../TodoStatusToggler';
 import { Button } from '../Button';
 import { Input } from '../Input';
 import basketLogo from '../../assets/basket.svg';
@@ -7,6 +7,7 @@ import editLogo from '../../assets/edit.svg';
 import style from './TodoItem.module.scss';
 import { fetchDeleteTodo, fetchEditTodo } from '../../api';
 import { Todo } from '../../shared/types.ts';
+import { validationValue } from '../../shared/validation.ts';
 
 type Props = {
   todo: Todo;
@@ -16,8 +17,14 @@ type Props = {
 export const TodoItem: FC<Props> = ({ todo, getData }) => {
   const [isEdit, setIsEdits] = useState(false);
   const [title, setTitle] = useState(todo.title ?? '');
+  const [error, setError] = useState('');
 
   const handleSave = async () => {
+    const { textError, hasError } = validationValue(title);
+    if (hasError) {
+      setError(textError);
+      return;
+    }
     try {
       await fetchEditTodo(todo.id, {
         title,
@@ -26,7 +33,7 @@ export const TodoItem: FC<Props> = ({ todo, getData }) => {
       await getData();
       setIsEdits(false);
     } catch (error) {
-      alert('OOops, Failed to save');
+      alert(error);
     }
   };
 
@@ -35,7 +42,7 @@ export const TodoItem: FC<Props> = ({ todo, getData }) => {
       await fetchDeleteTodo(id);
       await getData();
     } catch (error) {
-      alert('OOops, Failed to delete todo');
+      alert(error);
     }
   };
 
@@ -44,33 +51,35 @@ export const TodoItem: FC<Props> = ({ todo, getData }) => {
     setTitle(todo.title);
   };
 
-  if (isEdit) {
-    return (
-      <div className={style.todo}>
-        <Checkbox todo={todo} getData={getData} />
-        <Input value={title} setValue={setTitle} />
-        <div className={style['todo__actions']}>
-          <Button onClick={handleSave}>Save</Button>
-          <Button onClick={handleCancel} variant="danger">
-            Cancell
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className={style.todo}>
-      <Checkbox todo={todo} getData={getData} />
-      <span className={style['todo__title']}>{todo.title}</span>
-      <div className={style['todo__actions']}>
-        <Button onClick={() => setIsEdits(true)}>
-          <img src={editLogo} />
-        </Button>
-        <Button variant="danger" onClick={() => deleteTodo(+todo.id)}>
-          <img src={basketLogo} />
-        </Button>
-      </div>
-    </div>
+    <>
+      {isEdit && (
+        <div className={style.todo}>
+          <TodoStatusToggler todo={todo} getData={getData} />
+          <Input value={title} setValue={setTitle} />
+          {error && <span className={style.error}>{error}</span>}
+          <div className={style['todo__actions']}>
+            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleCancel} variant="danger">
+              Cancell
+            </Button>
+          </div>
+        </div>
+      )}
+      {!isEdit && (
+        <div className={style.todo}>
+          <TodoStatusToggler todo={todo} getData={getData} />
+          <span className={style['todo__title']}>{todo.title}</span>
+          <div className={style['todo__actions']}>
+            <Button onClick={() => setIsEdits(true)}>
+              <img src={editLogo} />
+            </Button>
+            <Button variant="danger" onClick={() => deleteTodo(+todo.id)}>
+              <img src={basketLogo} />
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

@@ -24,4 +24,8 @@ export interface MetaResponse<T, N> {
   };
 }
 
-export type Status = 'all' | 'completed' | 'inWork';
+export enum TODO_STATUS {
+  ALL = 'all',
+  COMPLETED = 'completed',
+  IN_WORK = 'inWork',
+}

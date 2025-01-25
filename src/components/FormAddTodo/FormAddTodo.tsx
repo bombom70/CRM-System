@@ -1,31 +1,15 @@
 import { FC, SyntheticEvent, useState } from 'react';
 import { Button } from '../Button';
 import { Input } from '../Input';
-import style from './Form.module.scss';
 import { fetchAddTodo } from '../../api';
+import style from './FormAddTodo.module.scss';
+import { validationValue } from '../../shared/validation';
 
 type Props = {
   getData: () => void;
 };
 
-const validationValue = (value: string) => {
-  let textError = '';
-  let hasError = false;
-  if (value.length < 2) {
-    textError = 'minimum number of characters 2';
-    hasError = true;
-  }
-  if (value.length > 64) {
-    textError = 'maximum number of characters 64';
-    hasError = true;
-  }
-  return {
-    textError,
-    hasError,
-  };
-};
-
-export const Form: FC<Props> = ({ getData }) => {
+export const FormAddTodo: FC<Props> = ({ getData }) => {
   const [value, setValue] = useState('');
   const [error, setError] = useState('');
 
@@ -41,10 +25,14 @@ export const Form: FC<Props> = ({ getData }) => {
       title: value,
     };
 
-    await fetchAddTodo(data);
-    await getData();
-    setError('');
-    setValue('');
+    try {
+      await fetchAddTodo(data);
+      await getData();
+      setError('');
+      setValue('');
+    } catch (error) {
+      alert(error);
+    }
   };
 
   return (
