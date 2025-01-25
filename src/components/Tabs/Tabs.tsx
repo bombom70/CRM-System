@@ -1,4 +1,4 @@
-import { FC, useEffect } from 'react';
+import { FC } from 'react';
 import style from './Tabs.module.scss';
 import { Status, TodoInfo } from '../../shared/types';
 
