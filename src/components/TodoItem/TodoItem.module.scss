@@ -1,0 +1,29 @@
+.todo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fff;
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    &-btn {
+      width: 40px;
+      height: 40px;
+    }
+  }
+}
+
+.todo__title {
+  margin-left: 12px;
+  flex-grow: 1;
+}
+
+.error {
+  color: red;
+  font-weight: 600;
+}

@@ -1,3 +1,5 @@
+import { TodosPage } from './components/TodosPage';
+
 export function App() {
-  return <>App</>;
+  return <TodosPage />;
 }
