@@ -13,9 +13,9 @@ const getRuName = (name: string) => {
     case 'all':
       return 'Все';
     case 'inWork':
-      return 'в работе';
+      return 'В прогрессе';
     case 'completed':
-      return 'сделано';
+      return 'Завершенные';
     default:
       return '';
   }

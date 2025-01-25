@@ -10,11 +10,10 @@ import { Todo } from '../../shared/types.ts';
 
 type Props = {
   todo: Todo;
-  changeDoneTodo: (todo: Todo, isDone: boolean) => void;
   getData: () => void;
 };
 
-export const TodoItem: FC<Props> = ({ todo, changeDoneTodo, getData }) => {
+export const TodoItem: FC<Props> = ({ todo, getData }) => {
   const [isEdit, setIsEdits] = useState(false);
   const [title, setTitle] = useState(todo.title ?? '');
 
@@ -40,14 +39,19 @@ export const TodoItem: FC<Props> = ({ todo, changeDoneTodo, getData }) => {
     }
   };
 
+  const handleCancel = () => {
+    setIsEdits(false);
+    setTitle(todo.title);
+  };
+
   if (isEdit) {
     return (
       <div className={style.todo}>
-        <Checkbox todo={todo} changeDoneTodo={changeDoneTodo} />
+        <Checkbox todo={todo} getData={getData} />
         <Input value={title} setValue={setTitle} />
         <div className={style['todo__actions']}>
           <Button onClick={handleSave}>Save</Button>
-          <Button onClick={() => setIsEdits(false)} variant="danger">
+          <Button onClick={handleCancel} variant="danger">
             Cancell
           </Button>
         </div>
@@ -57,7 +61,7 @@ export const TodoItem: FC<Props> = ({ todo, changeDoneTodo, getData }) => {
 
   return (
     <div className={style.todo}>
-      <Checkbox todo={todo} changeDoneTodo={changeDoneTodo} />
+      <Checkbox todo={todo} getData={getData} />
       <span className={style['todo__title']}>{todo.title}</span>
       <div className={style['todo__actions']}>
         <Button onClick={() => setIsEdits(true)}>

@@ -10,9 +10,9 @@ export function App() {
   const [tabs, setTabs] = useState<TodoInfo>();
   const [currentTab, setCurrentTab] = useState<Status>('all');
 
-  const getData = async (status = 'all') => {
+  const getData = async () => {
     try {
-      const res = await fetchData(status);
+      const res = await fetchData(currentTab);
       setTodos(res.data.reverse());
       setTabs(res?.info);
     } catch (error) {
@@ -21,12 +21,8 @@ export function App() {
   };
 
   useEffect(() => {
-    getData(currentTab);
+    getData();
   }, [currentTab]);
-
-  const changeDoneTodo = (todo: Todo, isDone: boolean) => {
-    todo.isDone = isDone;
-  };
 
   return (
     <div className="container">
@@ -38,11 +34,7 @@ export function App() {
           setCurrentTab={setCurrentTab}
         />
       )}
-      <TodoList
-        todos={todos}
-        changeDoneTodo={changeDoneTodo}
-        getData={getData}
-      />
+      <TodoList todos={todos} getData={getData} />
     </div>
   );
 }

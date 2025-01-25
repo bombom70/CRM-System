@@ -1,18 +1,25 @@
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import style from './Checkbox.module.scss';
 import { Todo } from '../../shared/types';
+import { fetchDoneTodo } from '../../api';
 
 type Props = {
   todo: Todo;
-  changeDoneTodo: (todo: Todo, isDone: boolean) => void;
+  getData: () => void;
 };
 
-export const Checkbox: FC<Props> = ({ todo, changeDoneTodo }) => {
-  const [checked, setChecked] = useState(todo.isDone);
-
-  const handleChange = () => {
-    setChecked((prev) => !prev);
-    changeDoneTodo(todo, checked);
+export const Checkbox: FC<Props> = ({ todo, getData }) => {
+  const changeDoneTodo = async (todo: Todo) => {
+    try {
+      const data = {
+        isDone: !todo.isDone,
+        title: todo.title,
+      };
+      await fetchDoneTodo(+todo.id, data);
+      await getData();
+    } catch (error) {
+      alert('OOops, Failed to change done on todo');
+    }
   };
 
   return (
@@ -20,9 +27,9 @@ export const Checkbox: FC<Props> = ({ todo, changeDoneTodo }) => {
       <input
         id={todo.id}
         type="checkbox"
-        checked={checked}
+        checked={todo.isDone}
         className={style['checkbox__input']}
-        onChange={handleChange}
+        onChange={() => changeDoneTodo(todo)}
       />
     </div>
   );

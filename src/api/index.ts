@@ -64,3 +64,22 @@ export const fetchDeleteTodo = async (id: number) => {
     throw Error();
   }
 };
+
+export const fetchDoneTodo = async (
+  id: number,
+  todo: TodoRequest
+): Promise<Todo> => {
+  try {
+    const res = await fetch(`${BASE_URL}/todos/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(todo),
+    });
+    if (!res.ok) {
+      throw new Error(res.statusText);
+    }
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    throw Error();
+  }
+};

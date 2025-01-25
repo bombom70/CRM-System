@@ -4,12 +4,11 @@ import style from './Input.module.scss';
 type Props = {
   placeholder?: string;
   value: string;
-  setValue?: (value: string) => void;
+  setValue: (value: string) => void;
 };
 
 export const Input: FC<Props> = ({ value, placeholder, setValue }) => {
   const handleChange = ({ target }: ChangeEvent<HTMLInputElement>) => {
-    if (!setValue) return;
     setValue(target.value);
   };
 
@@ -21,7 +20,9 @@ export const Input: FC<Props> = ({ value, placeholder, setValue }) => {
         value={value}
         onChange={handleChange}
         placeholder={placeholder}
+        required
       />
+      <div></div>
     </div>
   );
 };

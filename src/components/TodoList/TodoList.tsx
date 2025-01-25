@@ -5,20 +5,17 @@ import { Todo } from '../../shared/types';
 
 type Props = {
   todos?: Todo[];
-  changeDoneTodo: (todo: Todo, isDone: boolean) => void;
   getData: () => void;
 };
 
-export const TodoList: FC<Props> = ({ todos, changeDoneTodo, getData }) => {
+export const TodoList: FC<Props> = ({ todos, getData }) => {
+  if (!todos?.length) {
+    return <div>List is empty</div>;
+  }
   return (
     <div className={style['todo-list']}>
       {todos?.map((todo) => (
-        <TodoItem
-          key={todo.id}
-          todo={todo}
-          changeDoneTodo={changeDoneTodo}
-          getData={getData}
-        />
+        <TodoItem key={todo.id} todo={todo} getData={getData} />
       ))}
     </div>
   );
