@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Todo } from '../../shared/types';
 import { fetchDoneTodo } from '../../api';
-import style from './TodoStatusToggler.module.scss';
+import { Checkbox } from 'antd';
 
 type Props = {
   todo: Todo;
@@ -23,14 +23,6 @@ export const TodoStatusToggler: FC<Props> = ({ todo, getData }) => {
   };
 
   return (
-    <div className={style['todo-status-toggler']}>
-      <input
-        id={todo.id}
-        type="checkbox"
-        checked={todo.isDone}
-        className={style['todo-status-toggler__input']}
-        onChange={() => changeDoneTodo(todo)}
-      />
-    </div>
+    <Checkbox onChange={() => changeDoneTodo(todo)} checked={todo.isDone} />
   );
 };

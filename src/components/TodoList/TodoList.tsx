@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { TodoItem } from '../TodoItem';
-import style from './TodoList.module.scss';
 import { Todo } from '../../shared/types';
+import { Flex } from 'antd';
 
 type Props = {
   todos?: Todo[];
@@ -13,10 +13,10 @@ export const TodoList: FC<Props> = ({ todos, getData }) => {
     return <div>List is empty</div>;
   }
   return (
-    <div className={style['todo-list']}>
+    <Flex vertical gap={8}>
       {todos?.map((todo) => (
         <TodoItem key={todo.id} todo={todo} getData={getData} />
       ))}
-    </div>
+    </Flex>
   );
 };

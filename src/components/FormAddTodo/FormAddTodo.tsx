@@ -1,34 +1,39 @@
-import { FC, SyntheticEvent, useState } from 'react';
-import { Button } from '../Button';
-import { Input } from '../Input';
-import { fetchAddTodo } from '../../api';
-import style from './FormAddTodo.module.scss';
+import { ChangeEvent, FC, useEffect, useState } from 'react';
 import { validationValue } from '../../shared/validation';
+import { Form, Button, Input, Flex } from 'antd';
 
 type Props = {
-  getData: () => void;
+  title?: string;
+  name: string;
+  placeholder?: string;
+  hasCancelBtn?: boolean;
+  handleSubmit: (value?: string) => void;
+  handleCancel?: () => void;
 };
 
-export const FormAddTodo: FC<Props> = ({ getData }) => {
-  const [value, setValue] = useState('');
-  const [error, setError] = useState('');
+export const FormAddTodo: FC<Props> = ({
+  title,
+  name,
+  placeholder = 'Task To Be Done...',
+  hasCancelBtn,
+  handleCancel,
+  handleSubmit,
+}) => {
+  const [form] = Form.useForm();
+  const [value, setValue] = useState(title ?? '');
+  const initialValues = value ? { [name]: value } : { [name]: '' };
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setValue(value);
+  };
 
-  const createTodo = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    const { textError, hasError } = validationValue(value);
-    if (hasError) {
-      setError(textError);
-      return;
-    }
-    const data = {
-      isDone: false,
-      title: value,
-    };
+  useEffect(() => {
+    form.setFieldsValue({ [name]: value });
+  }, [form, initialValues]);
 
+  const handleFinished = async () => {
     try {
-      await fetchAddTodo(data);
-      await getData();
-      setError('');
+      await handleSubmit(value);
       setValue('');
     } catch (error) {
       alert(error);
@@ -36,18 +41,44 @@ export const FormAddTodo: FC<Props> = ({ getData }) => {
   };
 
   return (
-    <div className={style['form-wrapper']}>
-      <form className={style.form} onSubmit={createTodo}>
+    <Form
+      form={form}
+      onFinish={handleFinished}
+      autoComplete="off"
+      layout="inline"
+      initialValues={initialValues}
+      style={{ width: '100%' }}
+    >
+      <Form.Item
+        name={name}
+        rules={[
+          {
+            required: true,
+            validator: (_, value) => validationValue(value ?? ''),
+          },
+        ]}
+        style={{ flexGrow: 1 }}
+      >
         <Input
+          variant="borderless"
+          placeholder={placeholder}
           value={value}
-          setValue={setValue}
-          placeholder="Task To Be Done..."
+          style={{ borderBottom: '1px solid lightgray', borderRadius: 0 }}
+          onChange={handleChange}
         />
-        <Button title="Add" customClass={style['form__btn']} />
-      </form>
-      {!!error.length && (
-        <span className={style['form-wrapper__text-error']}>{error}</span>
-      )}
-    </div>
+      </Form.Item>
+      <Form.Item>
+        <Flex gap={4}>
+          <Button type="primary" htmlType="submit">
+            Add
+          </Button>
+          {hasCancelBtn && (
+            <Button variant="solid" color="danger" onClick={handleCancel}>
+              Cancel
+            </Button>
+          )}
+        </Flex>
+      </Form.Item>
+    </Form>
   );
 };

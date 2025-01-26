@@ -1,13 +1,11 @@
 import { FC, useState } from 'react';
 import { TodoStatusToggler } from '../TodoStatusToggler';
-import { Button } from '../Button';
-import { Input } from '../Input';
-import basketLogo from '../../assets/basket.svg';
-import editLogo from '../../assets/edit.svg';
-import style from './TodoItem.module.scss';
 import { fetchDeleteTodo, fetchEditTodo } from '../../api';
 import { Todo } from '../../shared/types.ts';
-import { validationValue } from '../../shared/validation.ts';
+import { Button, Flex, Typography, Avatar } from 'antd';
+import basketLogo from '../../assets/basket.svg';
+import editLogo from '../../assets/edit.svg';
+import { FormAddTodo } from '../FormAddTodo/FormAddTodo.tsx';
 
 type Props = {
   todo: Todo;
@@ -16,15 +14,8 @@ type Props = {
 
 export const TodoItem: FC<Props> = ({ todo, getData }) => {
   const [isEdit, setIsEdits] = useState(false);
-  const [title, setTitle] = useState(todo.title ?? '');
-  const [error, setError] = useState('');
 
-  const handleSave = async () => {
-    const { textError, hasError } = validationValue(title);
-    if (hasError) {
-      setError(textError);
-      return;
-    }
+  const handleSubmit = async (title?: string) => {
     try {
       await fetchEditTodo(todo.id, {
         title,
@@ -37,7 +28,7 @@ export const TodoItem: FC<Props> = ({ todo, getData }) => {
     }
   };
 
-  const deleteTodo = async (id: number) => {
+  const handleDeleteTodo = async (id: number) => {
     try {
       await fetchDeleteTodo(id);
       await getData();
@@ -48,38 +39,46 @@ export const TodoItem: FC<Props> = ({ todo, getData }) => {
 
   const handleCancel = () => {
     setIsEdits(false);
-    setTitle(todo.title);
   };
 
+  const { Text } = Typography;
+
   return (
-    <>
+    <Flex align="center" gap={4}>
+      <TodoStatusToggler todo={todo} getData={getData} />
       {isEdit && (
-        <div className={style.todo}>
-          <TodoStatusToggler todo={todo} getData={getData} />
-          <Input value={title} setValue={setTitle} />
-          {error && <span className={style.error}>{error}</span>}
-          <div className={style['todo__actions']}>
-            <Button onClick={handleSave}>Save</Button>
-            <Button onClick={handleCancel} variant="danger">
-              Cancell
-            </Button>
-          </div>
-        </div>
+        <FormAddTodo
+          name={`todoItemEdit_${todo.id}`}
+          handleCancel={handleCancel}
+          handleSubmit={handleSubmit}
+          hasCancelBtn
+          title={todo.title}
+        />
       )}
       {!isEdit && (
-        <div className={style.todo}>
-          <TodoStatusToggler todo={todo} getData={getData} />
-          <span className={style['todo__title']}>{todo.title}</span>
-          <div className={style['todo__actions']}>
-            <Button onClick={() => setIsEdits(true)}>
-              <img src={editLogo} />
+        <>
+          <Text
+            style={{
+              width: '100%',
+            }}
+          >
+            {todo.title}
+          </Text>
+          <Flex gap={4}>
+            <Button type="primary" onClick={() => setIsEdits(true)}>
+              <Avatar src={editLogo} />
             </Button>
-            <Button variant="danger" onClick={() => deleteTodo(+todo.id)}>
-              <img src={basketLogo} />
+            <Button
+              variant="solid"
+              color="danger"
+              htmlType="submit"
+              onClick={() => handleDeleteTodo(+todo.id)}
+            >
+              <Avatar src={basketLogo} />
             </Button>
-          </div>
-        </div>
+          </Flex>
+        </>
       )}
-    </>
+    </Flex>
   );
 };

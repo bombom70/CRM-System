@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import style from './TodoFilters.module.scss';
 import { TODO_STATUS, TodoInfo } from '../../shared/types';
+import { Button } from 'antd';
 
 type Props = {
   tabs: TodoInfo;
@@ -19,15 +19,16 @@ export const TodoFilters: FC<Props> = ({ tabs, currentTab, setCurrentTab }) => {
     setCurrentTab(value);
   };
   return (
-    <div className={style['todo-filters']}>
+    <div>
       {Object.entries(tabs).map(([key, val]) => (
-        <div
-          className={`${style['todo-filters__item']} ${key === currentTab ? style['todo-filters__item--selected'] : ''}`}
+        <Button
           key={key}
           onClick={() => handleClick(key as TODO_STATUS)}
+          color={key === currentTab ? 'primary' : 'default'}
+          variant="link"
         >
           {translatedFiltersLabel[key as TODO_STATUS]} ({val})
-        </div>
+        </Button>
       ))}
     </div>
   );
