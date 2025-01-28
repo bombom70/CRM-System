@@ -1,3 +1,4 @@
+import axios from 'axios';
 import {
   Todo,
   TodoRequest,
@@ -16,10 +17,9 @@ export const fetchData = async (
     if (status) {
       query.append('filter', status);
     }
-    const res = await fetch(`${BASE_URL}/todos?${query}`);
-    const data = await res.json();
-    if (!res.ok) {
-      throw new Error(res.statusText);
+    const { data, statusText } = await axios(`${BASE_URL}/todos?${query}`);
+    if (statusText.toLocaleLowerCase() !== 'ok') {
+      throw new Error(statusText);
     }
     return data;
   } catch (error) {
@@ -29,14 +29,10 @@ export const fetchData = async (
 
 export const fetchAddTodo = async (todo: TodoRequest): Promise<Todo> => {
   try {
-    const res = await fetch(`${BASE_URL}/todos`, {
-      method: 'POST',
-      body: JSON.stringify(todo),
-    });
-    if (!res.ok) {
-      throw new Error(res.statusText);
+    const { data, statusText } = await axios.post(`${BASE_URL}/todos`, todo);
+    if (statusText.toLocaleLowerCase() !== 'ok') {
+      throw new Error(statusText);
     }
-    const data = await res.json();
     return data;
   } catch (error) {
     throw error;
@@ -48,14 +44,13 @@ export const fetchEditTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const res = await fetch(`${BASE_URL}/todos/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(todo),
-    });
-    if (!res.ok) {
-      throw new Error(res.statusText);
+    const { data, statusText } = await axios.put(
+      `${BASE_URL}/todos/${id}`,
+      todo
+    );
+    if (statusText.toLocaleLowerCase() !== 'ok') {
+      throw new Error(statusText);
     }
-    const data = await res.json();
     return data;
   } catch (error) {
     throw error;
@@ -64,11 +59,9 @@ export const fetchEditTodo = async (
 
 export const fetchDeleteTodo = async (id: number) => {
   try {
-    const res = await fetch(`${BASE_URL}/todos/${id}`, {
-      method: 'DELETE',
-    });
-    if (!res.ok) {
-      throw new Error(res.statusText);
+    const { statusText } = await axios.delete(`${BASE_URL}/todos/${id}`);
+    if (statusText.toLocaleLowerCase() !== 'ok') {
+      throw new Error(statusText);
     }
   } catch (error) {
     throw error;
@@ -80,14 +73,13 @@ export const fetchDoneTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const res = await fetch(`${BASE_URL}/todos/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(todo),
-    });
-    if (!res.ok) {
-      throw new Error(res.statusText);
+    const { data, statusText } = await axios.put(
+      `${BASE_URL}/todos/${id}`,
+      todo
+    );
+    if (statusText.toLocaleLowerCase() !== 'ok') {
+      throw new Error(statusText);
     }
-    const data = await res.json();
     return data;
   } catch (error) {
     throw error;
