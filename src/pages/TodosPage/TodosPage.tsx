@@ -6,21 +6,17 @@ import { TodoFilters } from '../../components/TodoFilters';
 import { TodoList } from '../../components/TodoList';
 
 export const TodosPage: FC = () => {
-  const [loading, setLoading] = useState(false);
   const [todos, setTodos] = useState<Todo[]>([]);
   const [tabs, setTabs] = useState<TodoInfo>();
   const [currentTab, setCurrentTab] = useState<TODO_STATUS>(TODO_STATUS.ALL);
 
   const getData = async () => {
     try {
-      setLoading(true);
       const res = await fetchData(currentTab);
       setTodos(res.data.reverse());
       setTabs(res?.info);
     } catch (error) {
       alert(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -42,6 +38,15 @@ export const TodosPage: FC = () => {
     getData();
   }, [currentTab]);
 
+  useEffect(() => {
+    let timer = setTimeout(() => {
+      getData();
+    }, 5000);
+    return () => {
+      clearInterval(timer);
+    };
+  });
+
   return (
     <>
       <FormAddTodo name="todoItem" handleSubmit={createTodo} />
@@ -52,8 +57,7 @@ export const TodosPage: FC = () => {
           setCurrentTab={setCurrentTab}
         />
       )}
-      {loading && 'Loading...'}
-      {!loading && <TodoList todos={todos} getData={getData} />}
+      <TodoList todos={todos} getData={getData} />
     </>
   );
 };
