@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
 import { TodoStatusToggler } from '../TodoStatusToggler';
-import { fetchDeleteTodo, fetchEditTodo } from '../../api';
-import { Todo } from '../../shared/types.ts';
-import { Button, Flex, Typography, Avatar, Form, Input, FormProps } from 'antd';
-import basketLogo from '../../assets/basket.svg';
-import editLogo from '../../assets/edit.svg';
+import { Button, Flex, Typography, Avatar, FormProps, Form, Input } from 'antd';
+import { fetchEditTodo, fetchDeleteTodo } from '../../../api/todos.ts';
+import { Todo } from '../../../shared/types.ts';
+import basketLogo from '../../../assets/basket.svg';
+import editLogo from '../../../assets/edit.svg';
 
 type Props = {
   todo: Todo;
