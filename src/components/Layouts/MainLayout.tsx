@@ -5,7 +5,7 @@ import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { Menu } from '../Menu';
 
-export const Layout: FC = () => {
+export const MainLayout: FC = () => {
   const layoutStyle = {
     borderRadius: 8,
     overflow: 'hidden',
@@ -39,16 +39,5 @@ export const Layout: FC = () => {
         </Content>
       </AntLayout>
     </AntLayout>
-    // <Row>
-    //   <Col span={4}>
-    //     <Flex gap={4} vertical>
-    //       <Link to="/">Todo list</Link>
-    //       <Link to="/profile">Profile</Link>
-    //     </Flex>
-    //   </Col>
-    //   <Col span={12} offset={2}>
-    //     <Outlet />
-    //   </Col>
-    // </Row>
   );
 };

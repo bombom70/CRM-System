@@ -1,4 +1,4 @@
-import axios from 'axios';
+import { httpClient } from './httpClient.ts';
 import {
   Todo,
   TodoRequest,
@@ -6,12 +6,6 @@ import {
   TodoInfo,
   TodosStatus,
 } from '../shared/types.ts';
-
-const BASE_URL = 'https://easydev.club/api/v2';
-
-const httpClient = axios.create({
-  baseURL: BASE_URL,
-});
 
 export const fetchData = async (
   status: TodosStatus

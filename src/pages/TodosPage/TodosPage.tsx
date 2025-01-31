@@ -1,9 +1,9 @@
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { TodosStatus, Todo, TodoInfo } from '../../shared/types';
-import { fetchData } from '../../api';
-import { FormAddTodo } from '../../components/FormAddTodo';
-import { TodoFilters } from '../../components/TodoFilters';
-import { TodoList } from '../../components/TodoList';
+import { Todo, TodoInfo, TodosStatus } from '../../shared/types';
+import { fetchData } from '../../api/todos';
+import { FormAddTodo } from '../../components/Todos/FormAddTodo';
+import { TodoFilters } from '../../components/Todos/TodoFilters';
+import { TodoList } from '../../components/Todos/TodoList';
 
 const initialTabs = {
   all: 0,
