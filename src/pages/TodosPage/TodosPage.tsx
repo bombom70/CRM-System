@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useMemo, useState } from 'react';
 import { TODO_STATUS, Todo, TodoInfo } from '../../shared/types';
 import { fetchAddTodo, fetchData } from '../../api';
 import { FormAddTodo } from '../../components/FormAddTodo';
@@ -10,15 +10,22 @@ export const TodosPage: FC = () => {
   const [tabs, setTabs] = useState<TodoInfo>();
   const [currentTab, setCurrentTab] = useState<TODO_STATUS>(TODO_STATUS.ALL);
 
-  const getData = async () => {
-    try {
-      const res = await fetchData(currentTab);
-      setTodos(res.data.reverse());
-      setTabs(res?.info);
-    } catch (error) {
-      alert(error);
-    }
-  };
+  const getData = useMemo(() => {
+    let prevTodos: Todo[];
+
+    return async (todos?: Todo[]) => {
+      if (JSON.stringify(prevTodos) === JSON.stringify(todos)) return;
+      prevTodos = todos ?? [];
+
+      try {
+        const res = await fetchData(currentTab);
+        setTodos(res.data.reverse());
+        setTabs(res?.info);
+      } catch (error) {
+        alert(error);
+      }
+    };
+  }, [currentTab]);
 
   const createTodo = async (title?: string) => {
     const data = {
@@ -28,19 +35,19 @@ export const TodosPage: FC = () => {
 
     try {
       await fetchAddTodo(data);
-      await getData();
+      await getData(todos);
     } catch (error) {
       alert(error);
     }
   };
 
   useEffect(() => {
-    getData();
+    getData(todos);
   }, [currentTab]);
 
   useEffect(() => {
-    let timer = setTimeout(() => {
-      getData();
+    const timer = setTimeout(() => {
+      getData(todos);
     }, 5000);
     return () => {
       clearInterval(timer);
