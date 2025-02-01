@@ -9,15 +9,19 @@ import {
 
 const BASE_URL = 'https://easydev.club/api/v2';
 
+const httpClient = axios.create({
+  baseURL: BASE_URL,
+});
+
 export const fetchData = async (
   status: TODO_STATUS
 ): Promise<MetaResponse<Todo, TodoInfo>> => {
   try {
-    const query = new URLSearchParams();
-    if (status) {
-      query.append('filter', status);
-    }
-    const { data, statusText } = await axios(`${BASE_URL}/todos?${query}`);
+    const { data, statusText } = await httpClient(`${BASE_URL}/todos?`, {
+      params: {
+        filter: status,
+      },
+    });
     if (statusText.toLocaleLowerCase() !== 'ok') {
       throw new Error(statusText);
     }
@@ -29,7 +33,10 @@ export const fetchData = async (
 
 export const fetchAddTodo = async (todo: TodoRequest): Promise<Todo> => {
   try {
-    const { data, statusText } = await axios.post(`${BASE_URL}/todos`, todo);
+    const { data, statusText } = await httpClient.post(
+      `${BASE_URL}/todos`,
+      todo
+    );
     if (statusText.toLocaleLowerCase() !== 'ok') {
       throw new Error(statusText);
     }
@@ -44,7 +51,7 @@ export const fetchEditTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const { data, statusText } = await axios.put(
+    const { data, statusText } = await httpClient.put(
       `${BASE_URL}/todos/${id}`,
       todo
     );
@@ -59,7 +66,7 @@ export const fetchEditTodo = async (
 
 export const fetchDeleteTodo = async (id: number) => {
   try {
-    const { statusText } = await axios.delete(`${BASE_URL}/todos/${id}`);
+    const { statusText } = await httpClient.delete(`${BASE_URL}/todos/${id}`);
     if (statusText.toLocaleLowerCase() !== 'ok') {
       throw new Error(statusText);
     }
@@ -73,7 +80,7 @@ export const fetchDoneTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const { data, statusText } = await axios.put(
+    const { data, statusText } = await httpClient.put(
       `${BASE_URL}/todos/${id}`,
       todo
     );

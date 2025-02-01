@@ -4,7 +4,7 @@ import { Button } from 'antd';
 
 type Props = {
   tabs: TodoInfo;
-  currentTab: string;
+  currentTab: TODO_STATUS;
   setCurrentTab: (value: TODO_STATUS) => void;
 };
 

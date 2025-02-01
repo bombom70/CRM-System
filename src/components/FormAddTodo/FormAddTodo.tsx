@@ -1,5 +1,4 @@
 import { ChangeEvent, FC, useEffect, useState } from 'react';
-import { validationValue } from '../../shared/validation';
 import { Form, Button, Input, Flex } from 'antd';
 
 type Props = {
@@ -48,14 +47,17 @@ export const FormAddTodo: FC<Props> = ({
       layout="inline"
       initialValues={initialValues}
       style={{ width: '100%' }}
+      validateMessages={{ required: 'Task name is required' }}
     >
       <Form.Item
         name={name}
         rules={[
           {
             required: true,
-            validator: (_, value) => validationValue(value ?? ''),
           },
+          { whitespace: true },
+          { min: 2, message: 'Minimum number of characters 2' },
+          { max: 64, message: 'Maximum number of characters 64' },
         ]}
         style={{ flexGrow: 1 }}
       >
