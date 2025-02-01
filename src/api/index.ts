@@ -17,7 +17,7 @@ export const fetchData = async (
   status: TODO_STATUS
 ): Promise<MetaResponse<Todo, TodoInfo>> => {
   try {
-    const { data, statusText } = await httpClient(`${BASE_URL}/todos?`, {
+    const { data, statusText } = await httpClient('/todos', {
       params: {
         filter: status,
       },
@@ -33,10 +33,7 @@ export const fetchData = async (
 
 export const fetchAddTodo = async (todo: TodoRequest): Promise<Todo> => {
   try {
-    const { data, statusText } = await httpClient.post(
-      `${BASE_URL}/todos`,
-      todo
-    );
+    const { data, statusText } = await httpClient.post('/todos', todo);
     if (statusText.toLocaleLowerCase() !== 'ok') {
       throw new Error(statusText);
     }
@@ -51,10 +48,7 @@ export const fetchEditTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const { data, statusText } = await httpClient.put(
-      `${BASE_URL}/todos/${id}`,
-      todo
-    );
+    const { data, statusText } = await httpClient.put(`/todos/${id}`, todo);
     if (statusText.toLocaleLowerCase() !== 'ok') {
       throw new Error(statusText);
     }
@@ -66,7 +60,7 @@ export const fetchEditTodo = async (
 
 export const fetchDeleteTodo = async (id: number) => {
   try {
-    const { statusText } = await httpClient.delete(`${BASE_URL}/todos/${id}`);
+    const { statusText } = await httpClient.delete(`/todos/${id}`);
     if (statusText.toLocaleLowerCase() !== 'ok') {
       throw new Error(statusText);
     }
@@ -80,10 +74,7 @@ export const fetchDoneTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const { data, statusText } = await httpClient.put(
-      `${BASE_URL}/todos/${id}`,
-      todo
-    );
+    const { data, statusText } = await httpClient.put(`/todos/${id}`, todo);
     if (statusText.toLocaleLowerCase() !== 'ok') {
       throw new Error(statusText);
     }
