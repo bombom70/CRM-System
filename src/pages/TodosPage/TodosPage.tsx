@@ -1,4 +1,4 @@
-import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { TodosStatus, Todo, TodoInfo } from '../../shared/types';
 import { fetchData } from '../../api';
 import { FormAddTodo } from '../../components/FormAddTodo';
