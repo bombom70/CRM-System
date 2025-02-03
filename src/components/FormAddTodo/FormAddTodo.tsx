@@ -1,39 +1,31 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react';
-import { Form, Button, Input, Flex } from 'antd';
+import { FC } from 'react';
+import { Form, Button, Input, Flex, FormProps } from 'antd';
+import { fetchAddTodo } from '../../api';
+import { Todo } from '../../shared/types';
 
 type Props = {
-  title?: string;
-  name: string;
-  placeholder?: string;
-  hasCancelBtn?: boolean;
-  handleSubmit: (value?: string) => void;
-  handleCancel?: () => void;
+  todos: Todo[];
+  getData: (todos: Todo[]) => void;
 };
 
-export const FormAddTodo: FC<Props> = ({
-  title,
-  name,
-  placeholder = 'Task To Be Done...',
-  hasCancelBtn,
-  handleCancel,
-  handleSubmit,
-}) => {
+type FieldType = {
+  title: string;
+};
+
+export const FormAddTodo: FC<Props> = ({ todos, getData }) => {
   const [form] = Form.useForm();
-  const [value, setValue] = useState(title ?? '');
-  const initialValues = value ? { [name]: value } : { [name]: '' };
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    setValue(value);
-  };
+  const handleFinished: FormProps<FieldType>['onFinish'] = async ({
+    title,
+  }) => {
+    const data = {
+      isDone: false,
+      title,
+    };
 
-  useEffect(() => {
-    form.setFieldsValue({ [name]: value });
-  }, [form, initialValues]);
-
-  const handleFinished = async () => {
     try {
-      await handleSubmit(value);
-      setValue('');
+      await fetchAddTodo(data);
+      await getData(todos);
+      form.resetFields();
     } catch (error) {
       alert(error);
     }
@@ -45,12 +37,12 @@ export const FormAddTodo: FC<Props> = ({
       onFinish={handleFinished}
       autoComplete="off"
       layout="inline"
-      initialValues={initialValues}
+      initialValues={{ title: '' }}
       style={{ width: '100%' }}
       validateMessages={{ required: 'Task name is required' }}
     >
-      <Form.Item
-        name={name}
+      <Form.Item<FieldType>
+        name="title"
         rules={[
           {
             required: true,
@@ -63,10 +55,8 @@ export const FormAddTodo: FC<Props> = ({
       >
         <Input
           variant="borderless"
-          placeholder={placeholder}
-          value={value}
+          placeholder="Task To Be Done..."
           style={{ borderBottom: '1px solid lightgray', borderRadius: 0 }}
-          onChange={handleChange}
         />
       </Form.Item>
       <Form.Item>
@@ -74,11 +64,6 @@ export const FormAddTodo: FC<Props> = ({
           <Button type="primary" htmlType="submit">
             Add
           </Button>
-          {hasCancelBtn && (
-            <Button variant="solid" color="danger" onClick={handleCancel}>
-              Cancel
-            </Button>
-          )}
         </Flex>
       </Form.Item>
     </Form>

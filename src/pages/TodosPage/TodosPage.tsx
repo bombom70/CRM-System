@@ -1,69 +1,59 @@
-import { FC, useEffect, useMemo, useState } from 'react';
-import { TODO_STATUS, Todo, TodoInfo } from '../../shared/types';
-import { fetchAddTodo, fetchData } from '../../api';
+import { FC, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { TodosStatus, Todo, TodoInfo } from '../../shared/types';
+import { fetchData } from '../../api';
 import { FormAddTodo } from '../../components/FormAddTodo';
 import { TodoFilters } from '../../components/TodoFilters';
 import { TodoList } from '../../components/TodoList';
 
+const initialTabs = {
+  all: 0,
+  completed: 0,
+  inWork: 0,
+};
+
 export const TodosPage: FC = () => {
+  const prevTodos = useRef<Todo[] | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [tabs, setTabs] = useState<TodoInfo>();
-  const [currentTab, setCurrentTab] = useState<TODO_STATUS>(TODO_STATUS.ALL);
+  const [tabs, setTabs] = useState<TodoInfo>(initialTabs);
+  const [currentTab, setCurrentTab] = useState<TodosStatus>(TodosStatus.ALL);
 
-  const getData = useMemo(() => {
-    let prevTodos: Todo[];
-
-    return async (todos?: Todo[]) => {
-      if (JSON.stringify(prevTodos) === JSON.stringify(todos)) return;
-      prevTodos = todos ?? [];
-
-      try {
-        const res = await fetchData(currentTab);
-        setTodos(res.data.reverse());
-        setTabs(res?.info);
-      } catch (error) {
-        alert(error);
-      }
-    };
-  }, [currentTab]);
-
-  const createTodo = async (title?: string) => {
-    const data = {
-      isDone: false,
-      title,
-    };
-
+  const getData = useCallback(async () => {
     try {
-      await fetchAddTodo(data);
-      await getData(todos);
+      const res = await fetchData(currentTab);
+      if (
+        prevTodos.current &&
+        JSON.stringify(prevTodos.current) === JSON.stringify(res.data)
+      )
+        return;
+      prevTodos.current = res.data;
+      setTodos(res.data);
+      setTabs(res?.info ?? initialTabs);
     } catch (error) {
       alert(error);
     }
-  };
-
-  useEffect(() => {
-    getData(todos);
   }, [currentTab]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      getData(todos);
+    getData();
+  }, [currentTab, getData]);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      getData();
     }, 5000);
     return () => {
       clearInterval(timer);
     };
-  });
+  }, [currentTab, getData]);
 
   return (
     <>
-      <FormAddTodo name="todoItem" handleSubmit={createTodo} />
-      {tabs && (
-        <TodoFilters
-          tabs={tabs}
-          currentTab={currentTab}
-          setCurrentTab={setCurrentTab}
-        />
-      )}
+      <FormAddTodo todos={todos} getData={getData} />
+      <TodoFilters
+        tabs={tabs}
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+      />
       <TodoList todos={todos} getData={getData} />
     </>
   );

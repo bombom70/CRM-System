@@ -2,23 +2,26 @@ import { FC, useState } from 'react';
 import { TodoStatusToggler } from '../TodoStatusToggler';
 import { fetchDeleteTodo, fetchEditTodo } from '../../api';
 import { Todo } from '../../shared/types.ts';
-import { Button, Flex, Typography, Avatar } from 'antd';
+import { Button, Flex, Typography, Avatar, Form, Input, FormProps } from 'antd';
 import basketLogo from '../../assets/basket.svg';
 import editLogo from '../../assets/edit.svg';
-import { FormAddTodo } from '../FormAddTodo/FormAddTodo.tsx';
 
 type Props = {
   todo: Todo;
   getData: () => void;
 };
 
+type FieldType = {
+  task: string;
+};
+
 export const TodoItem: FC<Props> = ({ todo, getData }) => {
   const [isEdit, setIsEdits] = useState(false);
 
-  const handleSubmit = async (title?: string) => {
+  const handleFinished: FormProps<FieldType>['onFinish'] = async ({ task }) => {
     try {
       await fetchEditTodo(todo.id, {
-        title,
+        title: task,
         isDone: todo.isDone,
       });
       await getData();
@@ -47,13 +50,42 @@ export const TodoItem: FC<Props> = ({ todo, getData }) => {
     <Flex align="center" gap={4}>
       <TodoStatusToggler todo={todo} getData={getData} />
       {isEdit && (
-        <FormAddTodo
-          name={`todoItemEdit_${todo.id}`}
-          handleCancel={handleCancel}
-          handleSubmit={handleSubmit}
-          hasCancelBtn
-          title={todo.title}
-        />
+        <Form
+          onFinish={handleFinished}
+          autoComplete="off"
+          layout="inline"
+          initialValues={{ task: todo.title }}
+          style={{ width: '100%' }}
+          validateMessages={{ required: 'Task name is required' }}
+        >
+          <Form.Item<FieldType>
+            name="task"
+            rules={[
+              {
+                required: true,
+              },
+              { whitespace: true },
+              { min: 2, message: 'Minimum number of characters 2' },
+              { max: 64, message: 'Maximum number of characters 64' },
+            ]}
+            style={{ flexGrow: 1 }}
+          >
+            <Input
+              variant="borderless"
+              style={{ borderBottom: '1px solid lightgray', borderRadius: 0 }}
+            />
+          </Form.Item>
+          <Form.Item>
+            <Flex gap={4}>
+              <Button type="primary" htmlType="submit">
+                Add
+              </Button>
+              <Button variant="solid" color="danger" onClick={handleCancel}>
+                Cancel
+              </Button>
+            </Flex>
+          </Form.Item>
+        </Form>
       )}
       {!isEdit && (
         <>

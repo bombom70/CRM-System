@@ -4,7 +4,7 @@ import {
   TodoRequest,
   MetaResponse,
   TodoInfo,
-  TODO_STATUS,
+  TodosStatus,
 } from '../shared/types.ts';
 
 const BASE_URL = 'https://easydev.club/api/v2';
@@ -14,7 +14,7 @@ const httpClient = axios.create({
 });
 
 export const fetchData = async (
-  status: TODO_STATUS
+  status: TodosStatus
 ): Promise<MetaResponse<Todo, TodoInfo>> => {
   try {
     const { data, statusText } = await httpClient('/todos', {
