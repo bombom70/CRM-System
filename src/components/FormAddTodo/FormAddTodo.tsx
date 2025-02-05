@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { Form, Button, Input, Flex, FormProps } from 'antd';
 import { fetchAddTodo } from '../../api';
-import { Todo } from '../../shared/types';
 
 type Props = {
   getData: () => void;
