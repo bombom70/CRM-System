@@ -46,8 +46,8 @@ export const FormAddTodo: FC<Props> = ({ getData }) => {
             required: true,
           },
           { whitespace: true },
-          { min: 2, message: 'Minimum number of characters 2' },
-          { max: 64, message: 'Maximum number of characters 64' },
+          { min: 2, message: 'Минимальное количество символов 2' },
+          { max: 64, message: 'Максимальное количество символов 64' },
         ]}
         style={{ flexGrow: 1 }}
       >

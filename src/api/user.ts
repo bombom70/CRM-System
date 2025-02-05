@@ -1,9 +1,15 @@
 import { httpClient } from './httpClient.ts';
-import { UserRegistration } from '../shared/types.ts';
+import {
+  AuthData,
+  Profile,
+  RefreshToken,
+  Token,
+  UserRegistration,
+} from '../shared/types.ts';
 
-export const fetchUserData = async (
+export const fetchSignup = async (
   userRegistrationBody: UserRegistration
-): Promise<any> => {
+): Promise<Profile> => {
   try {
     const { data, status, statusText } = await httpClient.post(
       '/auth/signup',
@@ -13,6 +19,33 @@ export const fetchUserData = async (
     if (status !== 201) {
       throw new Error(statusText);
     }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fetchSignin = async (authData: AuthData): Promise<Token> => {
+  try {
+    const { data, status, statusText } = await httpClient.post(
+      '/auth/signin',
+      authData
+    );
+
+    if (status !== 200) {
+      throw new Error(statusText);
+    }
+    return data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const fetchRefresh = async (
+  refreshToken: RefreshToken
+): Promise<Token> => {
+  try {
+    const { data } = await httpClient.post('/auth/refresh', refreshToken);
     return data;
   } catch (error) {
     throw error;

@@ -1,8 +1,8 @@
 import { FC, useState } from 'react';
-import { Form, Button, Input, Flex, FormProps } from 'antd';
-import { fetchUserData } from '../../../api/user';
+import { Form, Button, Input, Flex, FormProps, Typography } from 'antd';
+import { fetchSignup } from '../../../api/user';
 import axios from 'axios';
-import { Modal } from '../../Modal';
+import { Modal } from '../Modal';
 import { Link } from 'react-router';
 
 type FieldType = {
@@ -16,19 +16,23 @@ type FieldType = {
 
 export const RegistrationForm: FC = () => {
   const [form] = Form.useForm();
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [formDisabled, setFormDisabled] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleFinished: FormProps<FieldType>['onFinish'] = async () => {
     try {
       setFormDisabled(true);
       const valuesForm = form.getFieldsValue();
-      await fetchUserData(valuesForm);
+      await fetchSignup(valuesForm);
+      setErrorMessage('');
       form.resetFields();
       setIsModalOpen(true);
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        form.setFields([{ name: 'login', errors: [error.response?.data] }]);
+        setErrorMessage(
+          'Пользователь с таким логином или адресом электронной почты уже существует'
+        );
       }
       throw error;
     } finally {
@@ -36,8 +40,11 @@ export const RegistrationForm: FC = () => {
     }
   };
 
+  const { Text } = Typography;
+
   return (
     <>
+      <Text type="danger">{errorMessage}</Text>
       <Form
         form={form}
         onFinish={handleFinished}
@@ -45,17 +52,18 @@ export const RegistrationForm: FC = () => {
         layout="vertical"
         disabled={formDisabled}
       >
-        <Flex vertical gap={8}>
+        <Flex vertical>
           <Form.Item<FieldType>
             label="Имя пользователя"
             name="username"
             rules={[
               {
                 required: true,
+                message: 'Обязательное поле',
               },
               { whitespace: true },
-              { min: 1, message: 'Minimum number of characters 1' },
-              { max: 60, message: 'Maximum number of characters 60' },
+              { min: 1, message: 'Минимальное количество символов 1' },
+              { max: 60, message: 'Максимальное количество символов 60' },
               () => ({
                 validator(_, value) {
                   const regex = /^[a-zA-Zа-яА-Я]+$/;
@@ -64,13 +72,12 @@ export const RegistrationForm: FC = () => {
                   }
                   return Promise.reject(
                     new Error(
-                      'You can only enter letters of the Russian and Latin alphabet!'
+                      'Вводить можно только буквы русского и латинского алфавита!'
                     )
                   );
                 },
               }),
             ]}
-            style={{ flexGrow: 1 }}
           >
             <Input />
           </Form.Item>
@@ -80,12 +87,12 @@ export const RegistrationForm: FC = () => {
             rules={[
               {
                 required: true,
+                message: 'Обязательное поле',
               },
               { whitespace: true },
-              { min: 2, message: 'Minimum number of characters 2' },
-              { max: 60, message: 'Maximum number of characters 60' },
+              { min: 2, message: 'Минимальное количество символов 2' },
+              { max: 60, message: 'Максимальное количество символов 60' },
             ]}
-            style={{ flexGrow: 1 }}
           >
             <Input />
           </Form.Item>
@@ -95,12 +102,12 @@ export const RegistrationForm: FC = () => {
             rules={[
               {
                 required: true,
+                message: 'Обязательное поле',
               },
               { whitespace: true },
-              { min: 6, message: 'Minimum number of characters 6' },
-              { max: 60, message: 'Maximum number of characters 60' },
+              { min: 6, message: 'Минимальное количество символов 6' },
+              { max: 60, message: 'Максимальное количество символов 60' },
             ]}
-            style={{ flexGrow: 1 }}
           >
             <Input type="password" />
           </Form.Item>
@@ -111,19 +118,17 @@ export const RegistrationForm: FC = () => {
             rules={[
               {
                 required: true,
+                message: 'Обязательное поле',
               },
               ({ getFieldValue }) => ({
                 validator(_, value) {
                   if (!value || getFieldValue('password') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(
-                    new Error('The new password that you entered do not match!')
-                  );
+                  return Promise.reject(new Error('Пароль должен совпадать!'));
                 },
               }),
             ]}
-            style={{ flexGrow: 1 }}
           >
             <Input type="password" />
           </Form.Item>
@@ -134,9 +139,9 @@ export const RegistrationForm: FC = () => {
               {
                 type: 'email',
                 required: true,
+                message: 'Обязательное поле',
               },
             ]}
-            style={{ flexGrow: 1 }}
           >
             <Input />
           </Form.Item>
@@ -146,6 +151,7 @@ export const RegistrationForm: FC = () => {
             rules={[
               {
                 required: true,
+                message: 'Обязательное поле',
               },
               () => ({
                 validator(_, value) {
@@ -154,12 +160,13 @@ export const RegistrationForm: FC = () => {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error('Please enter a valid phone number!')
+                    new Error(
+                      'Пожалуйста, введите действительный номер телефона!'
+                    )
                   );
                 },
               }),
             ]}
-            style={{ flexGrow: 1 }}
           >
             <Input type="tel" />
           </Form.Item>
@@ -179,12 +186,12 @@ export const RegistrationForm: FC = () => {
       </Form>
       <Modal
         isOpen={isModalOpen}
-        title={'Регистрация прошла успешно!'}
+        title="Регистрация прошла успешно!"
         setIsModalOpen={setIsModalOpen}
       >
         <p>
-          Перейдите на страницу <Link to="/auth"> авторизации </Link> для входа
-          в систему
+          Перейдите на страницу <Link to="/auth/login"> авторизации </Link> для
+          входа в систему
         </p>
       </Modal>
     </>
