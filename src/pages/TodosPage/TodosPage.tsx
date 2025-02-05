@@ -48,7 +48,7 @@ export const TodosPage: FC = () => {
 
   return (
     <>
-      <FormAddTodo todos={todos} getData={getData} />
+      <FormAddTodo getData={getData} />
       <TodoFilters
         tabs={tabs}
         currentTab={currentTab}

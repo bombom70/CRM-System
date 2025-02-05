@@ -4,15 +4,14 @@ import { fetchAddTodo } from '../../api';
 import { Todo } from '../../shared/types';
 
 type Props = {
-  todos: Todo[];
-  getData: (todos: Todo[]) => void;
+  getData: () => void;
 };
 
 type FieldType = {
   title: string;
 };
 
-export const FormAddTodo: FC<Props> = ({ todos, getData }) => {
+export const FormAddTodo: FC<Props> = ({ getData }) => {
   const [form] = Form.useForm();
   const handleFinished: FormProps<FieldType>['onFinish'] = async ({
     title,
@@ -24,7 +23,7 @@ export const FormAddTodo: FC<Props> = ({ todos, getData }) => {
 
     try {
       await fetchAddTodo(data);
-      await getData(todos);
+      await getData();
       form.resetFields();
     } catch (error) {
       alert(error);
