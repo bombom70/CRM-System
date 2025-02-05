@@ -22,6 +22,7 @@ export const App: FC = () => {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
       navigate('/auth/login');
+      throw error;
     }
   };
 
