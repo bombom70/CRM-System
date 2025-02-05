@@ -5,7 +5,7 @@ import { Flex } from 'antd';
 export const RegisterPage: FC = () => {
   return (
     <Flex vertical gap={12}>
-      <h1>Registration</h1>
+      <h1>Регистрация</h1>
       <RegistrationForm />
     </Flex>
   );

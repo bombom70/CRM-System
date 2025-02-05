@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
-import { Layout as AntLayout } from 'antd';
+import { Layout } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { Menu } from '../Menu';
@@ -29,15 +29,15 @@ export const MainLayout: FC = () => {
   };
 
   return (
-    <AntLayout style={layoutStyle}>
+    <Layout style={layoutStyle}>
       <Sider width={255} style={siderStyle}>
         <Menu />
       </Sider>
-      <AntLayout style={contentStyle}>
+      <Layout style={contentStyle}>
         <Content>
           <Outlet />
         </Content>
-      </AntLayout>
-    </AntLayout>
+      </Layout>
+    </Layout>
   );
 };
