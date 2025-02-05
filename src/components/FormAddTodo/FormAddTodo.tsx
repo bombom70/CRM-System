@@ -1,53 +1,69 @@
-import { FC, SyntheticEvent, useState } from 'react';
-import { Button } from '../Button';
-import { Input } from '../Input';
+import { FC } from 'react';
+import { Form, Button, Input, Flex, FormProps } from 'antd';
 import { fetchAddTodo } from '../../api';
-import style from './FormAddTodo.module.scss';
-import { validationValue } from '../../shared/validation';
 
 type Props = {
   getData: () => void;
 };
 
-export const FormAddTodo: FC<Props> = ({ getData }) => {
-  const [value, setValue] = useState('');
-  const [error, setError] = useState('');
+type FieldType = {
+  title: string;
+};
 
-  const createTodo = async (e: SyntheticEvent) => {
-    e.preventDefault();
-    const { textError, hasError } = validationValue(value);
-    if (hasError) {
-      setError(textError);
-      return;
-    }
+export const FormAddTodo: FC<Props> = ({ getData }) => {
+  const [form] = Form.useForm();
+  const handleFinished: FormProps<FieldType>['onFinish'] = async ({
+    title,
+  }) => {
     const data = {
       isDone: false,
-      title: value,
+      title,
     };
 
     try {
       await fetchAddTodo(data);
       await getData();
-      setError('');
-      setValue('');
+      form.resetFields();
     } catch (error) {
       alert(error);
     }
   };
 
   return (
-    <div className={style['form-wrapper']}>
-      <form className={style.form} onSubmit={createTodo}>
+    <Form
+      form={form}
+      onFinish={handleFinished}
+      autoComplete="off"
+      layout="inline"
+      initialValues={{ title: '' }}
+      style={{ width: '100%' }}
+      validateMessages={{ required: 'Task name is required' }}
+    >
+      <Form.Item<FieldType>
+        name="title"
+        rules={[
+          {
+            required: true,
+          },
+          { whitespace: true },
+          { min: 2, message: 'Minimum number of characters 2' },
+          { max: 64, message: 'Maximum number of characters 64' },
+        ]}
+        style={{ flexGrow: 1 }}
+      >
         <Input
-          value={value}
-          setValue={setValue}
+          variant="borderless"
           placeholder="Task To Be Done..."
+          style={{ borderBottom: '1px solid lightgray', borderRadius: 0 }}
         />
-        <Button title="Add" customClass={style['form__btn']} />
-      </form>
-      {!!error.length && (
-        <span className={style['form-wrapper__text-error']}>{error}</span>
-      )}
-    </div>
+      </Form.Item>
+      <Form.Item>
+        <Flex gap={4}>
+          <Button type="primary" htmlType="submit">
+            Add
+          </Button>
+        </Flex>
+      </Form.Item>
+    </Form>
   );
 };

@@ -1,33 +1,34 @@
 import { FC } from 'react';
-import style from './TodoFilters.module.scss';
-import { TODO_STATUS, TodoInfo } from '../../shared/types';
+import { TodosStatus, TodoInfo } from '../../shared/types';
+import { Button } from 'antd';
 
 type Props = {
   tabs: TodoInfo;
-  currentTab: string;
-  setCurrentTab: (value: TODO_STATUS) => void;
+  currentTab: TodosStatus;
+  setCurrentTab: (value: TodosStatus) => void;
 };
 
-const translatedFiltersLabel: Record<TODO_STATUS, string> = {
-  [TODO_STATUS.ALL]: 'Все',
-  [TODO_STATUS.COMPLETED]: 'Завершенные',
-  [TODO_STATUS.IN_WORK]: 'В прогрессе',
+const translatedFiltersLabel: Record<TodosStatus, string> = {
+  [TodosStatus.ALL]: 'Все',
+  [TodosStatus.COMPLETED]: 'Завершенные',
+  [TodosStatus.IN_WORK]: 'В прогрессе',
 };
 
 export const TodoFilters: FC<Props> = ({ tabs, currentTab, setCurrentTab }) => {
-  const handleClick = (value: TODO_STATUS) => {
+  const handleClick = (value: TodosStatus) => {
     setCurrentTab(value);
   };
   return (
-    <div className={style['todo-filters']}>
+    <div>
       {Object.entries(tabs).map(([key, val]) => (
-        <div
-          className={`${style['todo-filters__item']} ${key === currentTab ? style['todo-filters__item--selected'] : ''}`}
+        <Button
           key={key}
-          onClick={() => handleClick(key as TODO_STATUS)}
+          onClick={() => handleClick(key as TodosStatus)}
+          color={key === currentTab ? 'primary' : 'default'}
+          variant="link"
         >
-          {translatedFiltersLabel[key as TODO_STATUS]} ({val})
-        </div>
+          {translatedFiltersLabel[key as TodosStatus]} ({val})
+        </Button>
       ))}
     </div>
   );
