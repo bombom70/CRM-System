@@ -92,6 +92,19 @@ export const RegistrationForm: FC = () => {
               { whitespace: true },
               { min: 2, message: 'Минимальное количество символов 2' },
               { max: 60, message: 'Максимальное количество символов 60' },
+              () => ({
+                validator(_, value) {
+                  const regex = /^[a-zA-Zа-яА-Я]+$/;
+                  if (!value || regex.test(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(
+                      'Вводить можно только буквы русского и латинского алфавита!'
+                    )
+                  );
+                },
+              }),
             ]}
           >
             <Input />
@@ -149,10 +162,6 @@ export const RegistrationForm: FC = () => {
             label="Телефон"
             name="phone"
             rules={[
-              {
-                required: true,
-                message: 'Обязательное поле',
-              },
               () => ({
                 validator(_, value) {
                   const phoneRegex = /^(?:\+?\d{1,3})?(\d{10})$/;
