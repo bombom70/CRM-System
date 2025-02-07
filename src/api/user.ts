@@ -51,3 +51,11 @@ export const fetchRefresh = async (
     throw error;
   }
 };
+
+export const fetchLogout = async () => {
+  try {
+    await httpClient.post('/user/logout');
+  } catch (error) {
+    throw error;
+  }
+};

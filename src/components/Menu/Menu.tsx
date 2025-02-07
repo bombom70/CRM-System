@@ -6,8 +6,8 @@ export const Menu: FC = () => {
   const navigate = useNavigate();
 
   const items = [
-    { key: '1', label: 'Todo list', path: '/' },
-    { key: '2', label: 'Profile', path: '/profile' },
+    { key: '1', label: 'Список задач', path: '/' },
+    { key: '2', label: 'Личный кабинет', path: '/profile' },
   ];
 
   const onClick: MenuProps['onClick'] = ({ key }) => {

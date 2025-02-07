@@ -94,14 +94,12 @@ export const RegistrationForm: FC = () => {
               { max: 60, message: 'Максимальное количество символов 60' },
               () => ({
                 validator(_, value) {
-                  const regex = /^[a-zA-Zа-яА-Я]+$/;
+                  const regex = /^[a-zA-Z]+$/;
                   if (!value || regex.test(value)) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error(
-                      'Вводить можно только буквы русского и латинского алфавита!'
-                    )
+                    new Error('Вводить можно только буквы латинского алфавита!')
                   );
                 },
               }),
