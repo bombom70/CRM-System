@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { TokenStore } from '../shared/TokenStore';
 
 const BASE_URL = 'https://easydev.club/api/v1';
 
@@ -7,7 +8,8 @@ const httpClient = axios.create({
 });
 
 httpClient.interceptors.request.use((config) => {
-  config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken') ?? ''}`;
+  const tokenStore = new TokenStore();
+  config.headers.Authorization = `Bearer ${tokenStore.getAccess()}`;
   return config;
 });
 

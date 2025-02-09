@@ -1,9 +1,10 @@
 import { FC, useEffect } from 'react';
-import { fetchProfile, StatusLoading } from '../../store/user/userReducer';
+import { getProfileData, StatusLoading } from '../../store/user/userReducer';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { Button, List } from 'antd';
 import { fetchLogout } from '../../api/user';
 import { useNavigate } from 'react-router';
+import { TokenStore } from '../../shared/TokenStore';
 
 const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
@@ -11,23 +12,23 @@ export const ProfilePage: FC = () => {
   const { profileData, loading, error } = useAppSelector((state) => state.user);
   const dispath = useAppDispatch();
   const navigate = useNavigate();
+  const tokenStore = new TokenStore();
 
   const handleLogout = async () => {
     await fetchLogout();
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    tokenStore.clear();
     navigate('/auth/login');
   };
 
   useEffect(() => {
-    dispath(fetchProfile());
+    dispath(getProfileData());
   }, []);
 
   return (
     <>
       {loading === StatusLoading.REJECTED && error && <h1>{error}</h1>}
       {loading === StatusLoading.PENDING && <h1>Загрузка...</h1>}
-      {profileData && (
+      {loading === StatusLoading.FULFILLED && profileData && (
         <>
           <List
             size="large"

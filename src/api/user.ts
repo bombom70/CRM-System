@@ -59,3 +59,12 @@ export const fetchLogout = async () => {
     throw error;
   }
 };
+
+export const fetchProfile = async (): Promise<Profile> => {
+  try {
+    const res = await httpClient('/user/profile');
+    return res.data;
+  } catch (error) {
+    throw error;
+  }
+};

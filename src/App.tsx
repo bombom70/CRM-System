@@ -6,32 +6,38 @@ import { RegisterPage } from './pages/RegisterPage';
 import { LoginPage } from './pages/LoginPage';
 import { MainLayout, AuthLayout } from './components/Layouts';
 import { fetchRefresh } from './api/user';
+import { TokenStore } from './shared/TokenStore';
+import { useAppDispatch, useAppSelector } from './store';
+import { changeAuth } from './store/user/userReducer';
 
 export const App: FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const tokenStore = new TokenStore();
+  const isAuth = useAppSelector((store) => store.user.isAuth);
+  const dispatch = useAppDispatch();
 
-  const getTokens = async (token: string) => {
+  const refresh = async (token: string) => {
     try {
       const { accessToken, refreshToken } = await fetchRefresh({
         refreshToken: token,
       });
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      tokenStore.setTokens(accessToken, refreshToken);
+      dispatch(changeAuth(true));
     } catch (error) {
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      tokenStore.clear();
+      dispatch(changeAuth(false));
       throw error;
     }
   };
 
   useEffect(() => {
-    const token = localStorage.getItem('refreshToken');
-
-    if (token) {
-      getTokens(token);
+    const refreshToken = tokenStore.getRefresh();
+    if (isAuth && refreshToken) {
+      refresh(refreshToken);
       return;
     }
+
     if (!location.pathname.includes('registration')) {
       navigate('/auth/login');
     }

@@ -1,8 +1,11 @@
 import { FC, useState } from 'react';
-import { Flex, Input, Button, Form, FormProps, Typography } from 'antd';
-import { fetchSignin } from '../../../api/user';
 import axios from 'axios';
+import { Flex, Input, Button, Form, FormProps, Typography } from 'antd';
 import { useNavigate } from 'react-router';
+import { fetchSignin } from '../../../api/user';
+import { TokenStore } from '../../../shared/TokenStore';
+import { useAppDispatch } from '../../../store';
+import { changeAuth } from '../../../store/user/userReducer';
 
 type FieldType = {
   login: string;
@@ -14,14 +17,16 @@ export const LoginForm: FC = () => {
   const [formDisabled, setFormDisabled] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const tokenStore = new TokenStore();
 
   const handleFinished: FormProps<FieldType>['onFinish'] = async () => {
     try {
       setFormDisabled(true);
       const valuesForm = form.getFieldsValue();
       const { accessToken, refreshToken } = await fetchSignin(valuesForm);
-      localStorage.setItem('accessToken', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      tokenStore.setTokens(accessToken, refreshToken);
+      dispatch(changeAuth(true));
       setErrorMessage('');
       form.resetFields();
       navigate('/');
@@ -29,6 +34,7 @@ export const LoginForm: FC = () => {
       if (axios.isAxiosError(error)) {
         setErrorMessage('Неверные логин или пароль');
       }
+      dispatch(changeAuth(false));
       throw error;
     } finally {
       setFormDisabled(false);

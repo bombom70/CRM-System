@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Profile } from '../../shared/types';
-import { httpClient } from '../../api/httpClient';
+import { fetchProfile } from '../../api/user';
+import { TokenStore } from '../../shared/TokenStore';
 
 export enum StatusLoading {
   ITL = 'ITL',
@@ -11,48 +12,51 @@ export enum StatusLoading {
 
 export interface AuthState {
   profileData: Profile | null;
+  isAuth: boolean;
   loading: StatusLoading;
   error: string | null;
 }
 
-export const fetchProfile = createAsyncThunk<Profile, undefined>(
-  'users/profile',
-  async () => {
-    try {
-      const { data } = await httpClient('/user/profile');
-      return data;
-    } catch (error) {
-      throw error;
-    }
-  }
+export const getProfileData = createAsyncThunk<Profile, undefined>(
+  'user/profile',
+  fetchProfile
 );
+
+const tokenStore = new TokenStore();
 
 const initialState: AuthState = {
   profileData: null,
+  isAuth: tokenStore.getRefresh()?.length ? true : false,
   loading: StatusLoading.ITL,
   error: null,
 };
 
-export const authReducer = createSlice({
+export const userReducer = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    changeAuth(state, { payload }) {
+      state.isAuth = payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchProfile.pending, (state) => {
+      .addCase(getProfileData.pending, (state) => {
         state.loading = StatusLoading.PENDING;
         state.error = null;
       })
-      .addCase(fetchProfile.fulfilled, (state, action) => {
+      .addCase(getProfileData.fulfilled, (state, action) => {
         state.loading = StatusLoading.FULFILLED;
         state.profileData = action.payload;
         state.error = null;
       })
-      .addCase(fetchProfile.rejected, (state, action) => {
+      .addCase(getProfileData.rejected, (state, action) => {
         state.loading = StatusLoading.REJECTED;
         state.error = action.error as string;
       });
   },
 });
 
-export default authReducer.reducer;
+export const { changeAuth } = userReducer.actions;
+
+export default userReducer.reducer;
