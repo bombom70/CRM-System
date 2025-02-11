@@ -10,7 +10,7 @@ const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
 export const ProfilePage: FC = () => {
   const { profileData, loading, error } = useAppSelector((state) => state.user);
-  const dispath = useAppDispatch();
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const tokenStore = new TokenStore();
 
@@ -21,7 +21,7 @@ export const ProfilePage: FC = () => {
   };
 
   useEffect(() => {
-    dispath(getProfileData());
+    dispatch(getProfileData());
   }, []);
 
   return (
