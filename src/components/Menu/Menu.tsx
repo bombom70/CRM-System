@@ -1,21 +1,28 @@
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { Menu as AntMenu, MenuProps } from 'antd';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
 export const Menu: FC = () => {
+  const [activeKey, setActiveKey] = useState('');
+  const location = useLocation();
   const navigate = useNavigate();
 
   const items = [
-    { key: '1', label: 'Список задач', path: '/' },
-    { key: '2', label: 'Личный кабинет', path: '/profile' },
+    { key: '/', label: 'Список задач', path: '/' },
+    { key: '/profile', label: 'Личный кабинет', path: '/profile' },
   ];
 
   const onClick: MenuProps['onClick'] = ({ key }) => {
-    const { path } = items.find((item) => item.key === key) || {};
-    if (path) {
-      navigate(path);
-    }
+    setActiveKey(key);
   };
+
+  useEffect(() => {
+    navigate(activeKey);
+  }, [activeKey]);
+
+  useEffect(() => {
+    setActiveKey(location.pathname);
+  }, []);
 
   return (
     <AntMenu
@@ -26,6 +33,7 @@ export const Menu: FC = () => {
       defaultOpenKeys={['sub1']}
       mode="vertical"
       items={items}
+      selectedKeys={[activeKey]}
     />
   );
 };
