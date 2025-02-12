@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { TodoItem } from '../TodoItem';
-import { Todo } from '../../../shared/types';
 import { Flex } from 'antd';
+import { Todo } from '../../../api/todos/types';
 
 type Props = {
   todos?: Todo[];

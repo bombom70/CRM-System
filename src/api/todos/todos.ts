@@ -1,11 +1,11 @@
-import { httpClient } from './httpClient.ts';
+import { httpClient } from '../httpClient.ts';
 import {
-  Todo,
-  TodoRequest,
-  MetaResponse,
-  TodoInfo,
   TodosStatus,
-} from '../shared/types.ts';
+  MetaResponse,
+  Todo,
+  TodoInfo,
+  TodoRequest,
+} from './types.ts';
 
 export const fetchData = async (
   status: TodosStatus

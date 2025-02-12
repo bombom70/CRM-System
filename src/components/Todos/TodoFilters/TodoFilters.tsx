@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { TodosStatus, TodoInfo } from '../../../shared/types';
 import { Button } from 'antd';
+import { TodoInfo, TodosStatus } from '../../../api/todos/types';
 
 type Props = {
   tabs: TodoInfo;

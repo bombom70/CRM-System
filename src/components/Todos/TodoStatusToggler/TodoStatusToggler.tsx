@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { Todo } from '../../../shared/types';
-import { fetchDoneTodo } from '../../../api/todos';
+import { fetchDoneTodo } from '../../../api/todos/todos';
 import { Checkbox } from 'antd';
 
 type Props = {

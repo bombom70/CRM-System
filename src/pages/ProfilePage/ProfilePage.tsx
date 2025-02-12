@@ -1,23 +1,31 @@
 import { FC, useEffect } from 'react';
-import { getProfileData, StatusLoading } from '../../store/slices/profileSlice';
+import { getProfileData } from '../../store/slices/profileSlice';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { Button, List } from 'antd';
-import { fetchLogout, fetchRefresh } from '../../api/user';
 import { useNavigate } from 'react-router';
 import { tokenStore } from '../../api/TokenStore';
+import { fetchLogout, fetchRefresh } from '../../api/profile/profile';
+import { StatusLoading } from '../../shared/types';
 
 const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
 export const ProfilePage: FC = () => {
-  const { profileData, loading, error } = useAppSelector((state) => state.user);
+  const { profileData, loading, error } = useAppSelector(
+    (state) => state.profile
+  );
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const accessToken = tokenStore.getAccess() ?? '';
 
   const handleLogout = async () => {
-    await fetchLogout();
-    tokenStore.clear();
-    navigate('/auth/login');
+    try {
+      await fetchLogout();
+      localStorage.removeItem('isAdmin');
+      tokenStore.clear();
+      navigate('/auth/login');
+    } catch (error) {
+      throw error;
+    }
   };
 
   const refreshTokens = async (refreshToken: string) => {
@@ -28,6 +36,7 @@ export const ProfilePage: FC = () => {
       dispatch(getProfileData());
     } catch (error) {
       tokenStore.clear();
+      localStorage.removeItem('isAdmin');
       navigate('/auth/login');
       throw error;
     }

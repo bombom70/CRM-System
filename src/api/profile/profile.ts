@@ -1,11 +1,11 @@
-import { httpClient } from './httpClient.ts';
+import { httpClient } from '../httpClient.ts';
 import {
-  AuthData,
-  Profile,
-  RefreshToken,
-  Token,
   UserRegistration,
-} from '../shared/types.ts';
+  Profile,
+  AuthData,
+  Token,
+  RefreshToken,
+} from './types.ts';
 
 export const fetchSignup = async (
   userRegistrationBody: UserRegistration
@@ -63,6 +63,9 @@ export const fetchLogout = async () => {
 export const fetchProfile = async (): Promise<Profile> => {
   try {
     const res = await httpClient('/user/profile');
+    if (res.status !== 200) {
+      throw new Error(res.statusText);
+    }
     return res.data;
   } catch (error) {
     throw error;

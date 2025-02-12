@@ -2,10 +2,10 @@ import { FC, useState } from 'react';
 import axios from 'axios';
 import { Flex, Input, Button, Form, FormProps, Typography } from 'antd';
 import { useNavigate } from 'react-router';
-import { fetchSignin } from '../../../api/user';
-import { tokenStore } from '../../../api/TokenStore';
+import { fetchSignin } from '../../../api/profile/profile';
 import { useAppDispatch } from '../../../store';
-import { changeAuth } from '../../../store/slices/profileSlice';
+import { changeAuth, getProfileData } from '../../../store/slices/profileSlice';
+import { tokenStore } from '../../../api/TokenStore';
 
 type FieldType = {
   login: string;
@@ -27,6 +27,7 @@ export const LoginForm: FC = () => {
       tokenStore.setRefresh(refreshToken);
       tokenStore.setAccess(accessToken);
       dispatch(changeAuth(true));
+      dispatch(getProfileData());
       setErrorMessage('');
       form.resetFields();
       navigate('/');

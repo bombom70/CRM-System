@@ -6,6 +6,9 @@ import { RegisterPage } from './pages/RegisterPage';
 import { LoginPage } from './pages/LoginPage';
 import { MainLayout, AuthLayout } from './components/Layouts';
 import { tokenStore } from './api/TokenStore';
+import { UsersPage } from './pages/UsersPage';
+import { ProtectedRouter } from './shared/ProtectedRouter';
+import { UserProfilePage } from './pages/UserProfilePage';
 
 export const App: FC = () => {
   const navigate = useNavigate();
@@ -26,6 +29,10 @@ export const App: FC = () => {
       <Route path="/" element={<MainLayout />}>
         <Route path="/" element={<TodosPage />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route element={<ProtectedRouter />}>
+          <Route path="users" element={<UsersPage />} />
+          <Route path="users/:id" element={<UserProfilePage />} />
+        </Route>
       </Route>
       <Route path="/auth" element={<AuthLayout />}>
         <Route path="registration" element={<RegisterPage />} />

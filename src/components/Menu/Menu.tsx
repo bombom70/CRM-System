@@ -10,6 +10,7 @@ export const Menu: FC = () => {
   const items = [
     { key: '/', label: 'Список задач', path: '/' },
     { key: '/profile', label: 'Личный кабинет', path: '/profile' },
+    { key: '/users', label: 'Пользователи', path: '/users' },
   ];
 
   const onClick: MenuProps['onClick'] = ({ key }) => {

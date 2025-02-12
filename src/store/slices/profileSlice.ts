@@ -1,13 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Profile } from '../../shared/types';
-import { fetchProfile } from '../../api/user';
-
-export enum StatusLoading {
-  IDLE = 'IDLE',
-  PENDING = 'PENDING',
-  FULFILLED = 'FULFILLED',
-  REJECTED = 'REJECTED',
-}
+import { Profile, Roles } from '../../api/profile/types';
+import { fetchProfile } from '../../api/profile/profile';
+import { StatusLoading } from '../../shared/types';
 
 export interface AuthState {
   profileData: Profile | null;
@@ -17,7 +11,7 @@ export interface AuthState {
 }
 
 export const getProfileData = createAsyncThunk<Profile, undefined>(
-  'profile/fetch',
+  'profile/fetchProfile',
   fetchProfile
 );
 
@@ -41,16 +35,20 @@ export const profileSlice = createSlice({
       .addCase(getProfileData.pending, (state) => {
         state.loading = StatusLoading.PENDING;
         state.error = null;
+        localStorage.setItem('isAdmin', String(false));
       })
       .addCase(getProfileData.fulfilled, (state, action) => {
         state.loading = StatusLoading.FULFILLED;
         state.profileData = action.payload;
+        const isAdmin = action.payload.roles?.includes(Roles.ADMIN);
+        localStorage.setItem('isAdmin', String(isAdmin));
         state.error = null;
       })
       .addCase(getProfileData.rejected, (state, action) => {
         state.loading = StatusLoading.REJECTED;
         state.profileData = null;
         state.error = action.error.message as string;
+        localStorage.setItem('isAdmin', String(false));
       });
   },
 });
