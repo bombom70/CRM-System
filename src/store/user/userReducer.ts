@@ -52,7 +52,7 @@ export const userReducer = createSlice({
       })
       .addCase(getProfileData.rejected, (state, action) => {
         state.loading = StatusLoading.REJECTED;
-        state.error = action.error as string;
+        state.error = action.error.message as string;
       });
   },
 });
