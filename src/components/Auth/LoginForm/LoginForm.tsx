@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router';
 import { fetchSignin } from '../../../api/user';
 import { TokenStore } from '../../../shared/TokenStore';
 import { useAppDispatch } from '../../../store';
-import { changeAuth } from '../../../store/user/userReducer';
+import { changeAuth } from '../../../store/slices/profileSlice';
 
 type FieldType = {
   login: string;

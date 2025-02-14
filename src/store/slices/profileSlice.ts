@@ -18,7 +18,7 @@ export interface AuthState {
 }
 
 export const getProfileData = createAsyncThunk<Profile, undefined>(
-  'user/profile',
+  'profile/fetch',
   fetchProfile
 );
 
@@ -31,8 +31,8 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const userReducer = createSlice({
-  name: 'user',
+export const profileSlice = createSlice({
+  name: 'profile',
   initialState,
   reducers: {
     changeAuth(state, { payload }) {
@@ -57,6 +57,6 @@ export const userReducer = createSlice({
   },
 });
 
-export const { changeAuth } = userReducer.actions;
+export const { changeAuth } = profileSlice.actions;
 
-export default userReducer.reducer;
+export default profileSlice.reducer;

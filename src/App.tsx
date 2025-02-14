@@ -8,7 +8,7 @@ import { MainLayout, AuthLayout } from './components/Layouts';
 import { fetchRefresh } from './api/user';
 import { TokenStore } from './shared/TokenStore';
 import { useAppDispatch, useAppSelector } from './store';
-import { changeAuth } from './store/user/userReducer';
+import { changeAuth } from './store/slices/profileSlice';
 
 export const App: FC = () => {
   const navigate = useNavigate();

@@ -1,5 +1,5 @@
 import { FC, useEffect } from 'react';
-import { getProfileData, StatusLoading } from '../../store/user/userReducer';
+import { getProfileData, StatusLoading } from '../../store/slices/profileSlice';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { Button, List } from 'antd';
 import { fetchLogout } from '../../api/user';
