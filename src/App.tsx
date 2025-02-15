@@ -8,7 +8,7 @@ import { MainLayout, AuthLayout } from './components/Layouts';
 import { fetchRefresh } from './api/user';
 import { TokenStore } from './shared/TokenStore';
 import { useAppDispatch, useAppSelector } from './store';
-import { changeAuth } from './store/slices/profileSlice';
+import { changeAuth, getProfileData } from './store/slices/profileSlice';
 
 export const App: FC = () => {
   const navigate = useNavigate();
@@ -41,6 +41,10 @@ export const App: FC = () => {
     if (!location.pathname.includes('registration')) {
       navigate('/auth/login');
     }
+  }, []);
+
+  useEffect(() => {
+    dispatch(getProfileData());
   }, []);
 
   return (

@@ -1,6 +1,6 @@
-import { FC, useEffect } from 'react';
-import { getProfileData, StatusLoading } from '../../store/slices/profileSlice';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { FC } from 'react';
+import { StatusLoading } from '../../store/slices/profileSlice';
+import { useAppSelector } from '../../store';
 import { Button, List } from 'antd';
 import { fetchLogout } from '../../api/user';
 import { useNavigate } from 'react-router';
@@ -10,7 +10,6 @@ const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
 export const ProfilePage: FC = () => {
   const { profileData, loading, error } = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const tokenStore = new TokenStore();
 
@@ -19,10 +18,6 @@ export const ProfilePage: FC = () => {
     tokenStore.clear();
     navigate('/auth/login');
   };
-
-  useEffect(() => {
-    dispatch(getProfileData());
-  }, []);
 
   return (
     <>
