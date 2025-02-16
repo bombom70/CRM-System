@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Flex, Input, Button, Form, FormProps, Typography } from 'antd';
 import { useNavigate } from 'react-router';
 import { fetchSignin } from '../../../api/user';
-import { TokenStore } from '../../../shared/TokenStore';
+import { tokenStore } from '../../../shared/TokenStore';
 import { useAppDispatch } from '../../../store';
 import { changeAuth } from '../../../store/slices/profileSlice';
 
@@ -18,14 +18,14 @@ export const LoginForm: FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const tokenStore = new TokenStore();
 
   const handleFinished: FormProps<FieldType>['onFinish'] = async () => {
     try {
       setFormDisabled(true);
       const valuesForm = form.getFieldsValue();
       const { accessToken, refreshToken } = await fetchSignin(valuesForm);
-      tokenStore.setTokens(accessToken, refreshToken);
+      tokenStore.setRefresh(refreshToken);
+      tokenStore.setAccess(accessToken);
       dispatch(changeAuth(true));
       setErrorMessage('');
       form.resetFields();

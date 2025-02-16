@@ -1,9 +1,9 @@
-export class TokenStore {
+class TokenStore {
   private accessToken: string | null;
   private refreshToken: string | null;
 
   constructor() {
-    this.accessToken = localStorage.getItem('accessToken') ?? null;
+    this.accessToken = null;
     this.refreshToken = localStorage.getItem('refreshToken') ?? null;
   }
 
@@ -15,13 +15,20 @@ export class TokenStore {
     return this.refreshToken;
   }
 
-  setTokens(accessToken: string, refreshToken: string) {
-    localStorage.setItem('accessToken', accessToken);
+  setAccess(accessToken: string) {
+    this.accessToken = accessToken;
+  }
+
+  setRefresh(refreshToken: string) {
+    this.refreshToken = refreshToken;
     localStorage.setItem('refreshToken', refreshToken);
   }
 
   clear() {
-    localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    this.accessToken = null;
+    this.refreshToken = null;
   }
 }
+
+export const tokenStore = new TokenStore();

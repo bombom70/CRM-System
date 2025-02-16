@@ -4,15 +4,9 @@ import { fetchSignup } from '../../../api/user';
 import axios from 'axios';
 import { Modal } from '../Modal';
 import { Link } from 'react-router';
+import { UserRegistration } from '../../../shared/types';
 
-type FieldType = {
-  username: string;
-  login: string;
-  password: string;
-  repeatPassword: string;
-  email: string;
-  phone: string;
-};
+type FieldType = UserRegistration & { repeatPassword: string };
 
 export const RegistrationForm: FC = () => {
   const [form] = Form.useForm();
@@ -20,10 +14,11 @@ export const RegistrationForm: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleFinished: FormProps<FieldType>['onFinish'] = async () => {
+  const handleFinished: FormProps<FieldType>['onFinish'] = async (
+    valuesForm
+  ) => {
     try {
       setFormDisabled(true);
-      const valuesForm = form.getFieldsValue();
       await fetchSignup(valuesForm);
       setErrorMessage('');
       form.resetFields();
@@ -158,7 +153,7 @@ export const RegistrationForm: FC = () => {
           </Form.Item>
           <Form.Item<FieldType>
             label="Телефон"
-            name="phone"
+            name="phoneNumber"
             rules={[
               () => ({
                 validator(_, value) {

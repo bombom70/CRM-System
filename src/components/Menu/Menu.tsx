@@ -14,11 +14,8 @@ export const Menu: FC = () => {
 
   const onClick: MenuProps['onClick'] = ({ key }) => {
     setActiveKey(key);
+    navigate(key);
   };
-
-  useEffect(() => {
-    navigate(activeKey);
-  }, [activeKey]);
 
   useEffect(() => {
     setActiveKey(location.pathname);

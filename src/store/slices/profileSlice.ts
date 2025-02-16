@@ -1,10 +1,9 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { Profile } from '../../shared/types';
 import { fetchProfile } from '../../api/user';
-import { TokenStore } from '../../shared/TokenStore';
 
 export enum StatusLoading {
-  ITL = 'ITL',
+  IDLE = 'IDLE',
   PENDING = 'PENDING',
   FULFILLED = 'FULFILLED',
   REJECTED = 'REJECTED',
@@ -22,12 +21,10 @@ export const getProfileData = createAsyncThunk<Profile, undefined>(
   fetchProfile
 );
 
-const tokenStore = new TokenStore();
-
 const initialState: AuthState = {
   profileData: null,
-  isAuth: tokenStore.getRefresh()?.length ? true : false,
-  loading: StatusLoading.ITL,
+  isAuth: false,
+  loading: StatusLoading.IDLE,
   error: null,
 };
 
@@ -52,6 +49,7 @@ export const profileSlice = createSlice({
       })
       .addCase(getProfileData.rejected, (state, action) => {
         state.loading = StatusLoading.REJECTED;
+        state.profileData = null;
         state.error = action.error.message as string;
       });
   },
