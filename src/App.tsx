@@ -54,6 +54,10 @@ export const App: FC = () => {
         <Route path="registration" element={<RegisterPage />} />
         <Route path="login" element={<LoginPage />} />
       </Route>
+      <Route path="/auth" element={<AuthLayout />}>
+        <Route path="registration" element={<RegisterPage />} />
+        <Route path="login" element={<LoginPage />} />
+      </Route>
     </Routes>
   );
 };
