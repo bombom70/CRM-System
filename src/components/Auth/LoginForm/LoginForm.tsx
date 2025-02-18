@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Flex, Input, Button, Form, FormProps, Typography } from 'antd';
 import { useNavigate } from 'react-router';
 import { fetchSignin } from '../../../api/user';
-import { tokenStore } from '../../../shared/TokenStore';
+import { tokenStore } from '../../../api/TokenStore';
 import { useAppDispatch } from '../../../store';
 import { changeAuth } from '../../../store/slices/profileSlice';
 

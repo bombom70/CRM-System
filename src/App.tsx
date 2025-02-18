@@ -5,7 +5,7 @@ import { ProfilePage } from './pages/ProfilePage';
 import { RegisterPage } from './pages/RegisterPage';
 import { LoginPage } from './pages/LoginPage';
 import { MainLayout, AuthLayout } from './components/Layouts';
-import { tokenStore } from './shared/TokenStore';
+import { tokenStore } from './api/TokenStore';
 
 export const App: FC = () => {
   const navigate = useNavigate();

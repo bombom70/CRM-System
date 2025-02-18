@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { tokenStore } from '../shared/TokenStore';
+import { tokenStore } from './TokenStore';
 
 const BASE_URL = 'https://easydev.club/api/v1';
 

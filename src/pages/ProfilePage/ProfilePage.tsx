@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { Button, List } from 'antd';
 import { fetchLogout, fetchRefresh } from '../../api/user';
 import { useNavigate } from 'react-router';
-import { tokenStore } from '../../shared/TokenStore';
+import { tokenStore } from '../../api/TokenStore';
 
 const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
