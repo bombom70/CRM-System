@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
 import { TodoStatusToggler } from '../TodoStatusToggler';
-import { fetchDeleteTodo, fetchEditTodo } from '../../api';
-import { Todo } from '../../shared/types.ts';
-import { Button, Flex, Typography, Avatar, Form, Input, FormProps } from 'antd';
-import basketLogo from '../../assets/basket.svg';
-import editLogo from '../../assets/edit.svg';
+import { Button, Flex, Typography, Avatar, FormProps, Form, Input } from 'antd';
+import { fetchEditTodo, fetchDeleteTodo } from '../../../api/todos.ts';
+import { Todo } from '../../../shared/types.ts';
+import basketLogo from '../../../assets/basket.svg';
+import editLogo from '../../../assets/edit.svg';
 
 type Props = {
   todo: Todo;
@@ -65,8 +65,8 @@ export const TodoItem: FC<Props> = ({ todo, getData }) => {
                 required: true,
               },
               { whitespace: true },
-              { min: 2, message: 'Minimum number of characters 2' },
-              { max: 64, message: 'Maximum number of characters 64' },
+              { min: 2, message: 'Минимальное количество символов 2' },
+              { max: 64, message: 'Максимальное количество символов 64' },
             ]}
             style={{ flexGrow: 1 }}
           >

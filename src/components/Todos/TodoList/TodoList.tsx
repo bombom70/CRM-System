@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { TodoItem } from '../TodoItem';
-import { Todo } from '../../shared/types';
+import { Todo } from '../../../shared/types';
 import { Flex } from 'antd';
 
 type Props = {

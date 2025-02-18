@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { TodosStatus, TodoInfo } from '../../shared/types';
+import { TodosStatus, TodoInfo } from '../../../shared/types';
 import { Button } from 'antd';
 
 type Props = {

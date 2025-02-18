@@ -1,11 +1,11 @@
 import { FC } from 'react';
 import { Outlet } from 'react-router';
-import { Layout as AntLayout } from 'antd';
+import { Layout } from 'antd';
 import { Content } from 'antd/es/layout/layout';
 import Sider from 'antd/es/layout/Sider';
 import { Menu } from '../Menu';
 
-export const Layout: FC = () => {
+export const MainLayout: FC = () => {
   const layoutStyle = {
     borderRadius: 8,
     overflow: 'hidden',
@@ -29,26 +29,15 @@ export const Layout: FC = () => {
   };
 
   return (
-    <AntLayout style={layoutStyle}>
+    <Layout style={layoutStyle}>
       <Sider width={255} style={siderStyle}>
         <Menu />
       </Sider>
-      <AntLayout style={contentStyle}>
+      <Layout style={contentStyle}>
         <Content>
           <Outlet />
         </Content>
-      </AntLayout>
-    </AntLayout>
-    // <Row>
-    //   <Col span={4}>
-    //     <Flex gap={4} vertical>
-    //       <Link to="/">Todo list</Link>
-    //       <Link to="/profile">Profile</Link>
-    //     </Flex>
-    //   </Col>
-    //   <Col span={12} offset={2}>
-    //     <Outlet />
-    //   </Col>
-    // </Row>
+      </Layout>
+    </Layout>
   );
 };
