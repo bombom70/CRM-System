@@ -6,11 +6,12 @@ export const Menu: FC = () => {
   const [activeKey, setActiveKey] = useState('');
   const location = useLocation();
   const navigate = useNavigate();
+  const isAdmin = JSON.parse(localStorage.getItem('isAdmin') || '');
 
   const items = [
     { key: '/', label: 'Список задач', path: '/' },
     { key: '/profile', label: 'Личный кабинет', path: '/profile' },
-    { key: '/users', label: 'Пользователи', path: '/users' },
+    isAdmin && { key: '/users', label: 'Пользователи', path: '/users' },
   ];
 
   const onClick: MenuProps['onClick'] = ({ key }) => {

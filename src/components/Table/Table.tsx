@@ -214,7 +214,6 @@ export const Table: FC<Props> = ({ users, totalAmount, loading }) => {
         />
         <Filter onSelectFilter={handleChangeStatusFilter} />
       </Flex>
-      {modelType}
       <AntTable<User>
         columns={columns}
         dataSource={users}

@@ -1,4 +1,4 @@
-export const debounce = <T extends any[]>(
+export const debounce = <T extends unknown[]>(
   callback: (...args: T) => void,
   delay = 0,
   immediate = false
