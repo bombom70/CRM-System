@@ -2,9 +2,9 @@ import { FC, useState } from 'react';
 import { TodoStatusToggler } from '../TodoStatusToggler';
 import { Button, Flex, Typography, Avatar, FormProps, Form, Input } from 'antd';
 import { fetchEditTodo, fetchDeleteTodo } from '../../../api/todos/todos.ts';
-import { Todo } from '../../../shared/types.ts';
 import basketLogo from '../../../assets/basket.svg';
 import editLogo from '../../../assets/edit.svg';
+import { Todo } from '../../../api/todos/types.ts';
 
 type Props = {
   todo: Todo;

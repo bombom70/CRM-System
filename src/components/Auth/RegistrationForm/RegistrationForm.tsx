@@ -4,7 +4,7 @@ import { fetchSignup } from '../../../api/profile/profile';
 import axios from 'axios';
 import { Modal } from '../Modal';
 import { Link } from 'react-router';
-import { UserRegistration } from '../../../shared/types';
+import { UserRegistration } from '../../../api/profile/types';
 
 type FieldType = UserRegistration & { repeatPassword: string };
 
