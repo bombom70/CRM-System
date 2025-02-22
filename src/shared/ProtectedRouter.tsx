@@ -1,7 +1,8 @@
 import { FC } from 'react';
 import { Navigate, Outlet } from 'react-router';
+import { useIsAdmin } from './utils';
 
 export const ProtectedRouter: FC = () => {
-  const isAdmin = JSON.parse(localStorage.getItem('isAdmin') || '');
+  const isAdmin = useIsAdmin();
   return isAdmin ? <Outlet /> : <Navigate to="/" />;
 };

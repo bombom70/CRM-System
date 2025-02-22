@@ -1,18 +1,22 @@
 import { FC, useEffect, useState } from 'react';
 import { Menu as AntMenu, MenuProps } from 'antd';
 import { useLocation, useNavigate } from 'react-router';
+import { useIsAdmin } from '../../shared/utils';
+import { useAppSelector } from '../../store';
+
+const items = [
+  { key: '/', label: 'Список задач', path: '/' },
+  { key: '/profile', label: 'Личный кабинет', path: '/profile' },
+  { key: '/users', label: 'Пользователи', path: '/users' },
+];
 
 export const Menu: FC = () => {
   const [activeKey, setActiveKey] = useState('');
+  const profileData = useAppSelector((state) => state.profile.profileData);
+  const [menuItems, setMenuItems] = useState(items);
   const location = useLocation();
   const navigate = useNavigate();
-  const isAdmin = JSON.parse(localStorage.getItem('isAdmin') || '');
-
-  const items = [
-    { key: '/', label: 'Список задач', path: '/' },
-    { key: '/profile', label: 'Личный кабинет', path: '/profile' },
-    isAdmin && { key: '/users', label: 'Пользователи', path: '/users' },
-  ];
+  const isAdmin = useIsAdmin();
 
   const onClick: MenuProps['onClick'] = ({ key }) => {
     setActiveKey(key);
@@ -23,6 +27,14 @@ export const Menu: FC = () => {
     setActiveKey(location.pathname);
   }, []);
 
+  useEffect(() => {
+    if (isAdmin) {
+      setMenuItems(items);
+    } else {
+      setMenuItems((prev) => prev.filter((item) => item.key !== '/users'));
+    }
+  }, [profileData]);
+
   return (
     <AntMenu
       theme="light"
@@ -31,7 +43,7 @@ export const Menu: FC = () => {
       defaultSelectedKeys={['1']}
       defaultOpenKeys={['sub1']}
       mode="vertical"
-      items={items}
+      items={menuItems}
       selectedKeys={[activeKey]}
     />
   );
