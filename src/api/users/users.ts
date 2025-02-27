@@ -1,11 +1,5 @@
 import { httpClient } from '../httpClient';
-import {
-  MetaResponse,
-  User,
-  UserFilters,
-  UserRequest,
-  UserRolesRequest,
-} from './types';
+import { MetaResponse, User, UserFilters, UserRolesRequest } from './types';
 
 export const fetchUsers = async (
   params?: UserFilters
@@ -33,7 +27,7 @@ export const fetchGetProfileUser = async (id: string): Promise<User> => {
 };
 
 export const fetchUpdateProfileUser = async (
-  userData: UserRequest & { id: string }
+  userData: Record<string, string>
 ): Promise<User> => {
   try {
     const { id, ...data } = userData;

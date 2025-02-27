@@ -3,12 +3,27 @@ import { Form, Input, Modal } from 'antd';
 import { useAppDispatch } from '../store';
 import { User } from '../api/users/types';
 import { updateProfileUser } from '../store/slices/usersSlice';
+import { excludeKeys } from '../shared/constants';
 
 type Props = {
   userProfile: User;
   isOpen: boolean;
   handleCancel: () => void;
   handleOk: () => void;
+};
+
+const makeUserData = (userProfile: User, formData: Record<string, string>) => {
+  return Object.entries(userProfile)
+    .filter(([key]) => !excludeKeys.includes(key))
+    .reduce(
+      (acc, [key, val]) => {
+        if (formData[key] !== val) {
+          acc[key] = formData[key];
+        }
+        return acc;
+      },
+      { id: String(userProfile.id) } as Record<string, string>
+    );
 };
 
 export const ModalUpdateUser: FC<Props> = ({
@@ -18,15 +33,19 @@ export const ModalUpdateUser: FC<Props> = ({
   handleCancel,
 }) => {
   const [form] = Form.useForm();
-  const dispath = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   const handleFinished = async () => {
     try {
-      const userData = {
-        id: userProfile.id,
-        ...form.getFieldsValue(),
-      };
-      await dispath(updateProfileUser(userData));
+      const userData = makeUserData(userProfile, form.getFieldsValue());
+
+      if (Object.keys(userData).length < 2) {
+        handleOk();
+        return;
+      }
+
+      await dispatch(updateProfileUser(userData));
+      form.resetFields();
       handleOk();
     } catch (error) {
       throw error;

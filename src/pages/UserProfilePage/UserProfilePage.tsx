@@ -5,8 +5,9 @@ import { getProfileUser } from '../../store/slices/usersSlice';
 import { List, Button, Flex, Typography } from 'antd';
 import { ModalUpdateUser } from '../../components/ModalUpdateUser';
 import { StatusLoading } from '../../shared/types';
-
-const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
+import { excludeKeys } from '../../shared/constants';
+import { tokenStore } from '../../api/TokenStore';
+import { fetchRefresh } from '../../api/profile/profile';
 
 export const UserProfilePage: FC = () => {
   const { id } = useParams();
@@ -33,7 +34,31 @@ export const UserProfilePage: FC = () => {
     navigate('/users');
   };
 
+  const accessToken = tokenStore.getAccess() ?? '';
+
+  const refreshTokens = async (refreshToken: string) => {
+    try {
+      const newTokens = await fetchRefresh({ refreshToken });
+      tokenStore.setAccess(newTokens.accessToken);
+      tokenStore.setRefresh(newTokens.refreshToken);
+      if (id) {
+        dispatch(getProfileUser(id));
+      }
+    } catch (error) {
+      tokenStore.clear();
+      localStorage.removeItem('isAdmin');
+      navigate('/auth/login');
+      throw error;
+    }
+  };
+
   useEffect(() => {
+    const refreshToken = tokenStore.getRefresh() ?? '';
+
+    if (!accessToken) {
+      refreshTokens(refreshToken);
+      return;
+    }
     if (id) {
       dispatch(getProfileUser(id));
     }
@@ -44,11 +69,11 @@ export const UserProfilePage: FC = () => {
   return (
     <>
       {loading === StatusLoading.PENDING && <h1>Загрузка...</h1>}
-      {userProfile && (
-        <Flex gap={16} vertical>
-          {loading === StatusLoading.REJECTED && error && (
-            <Text type="danger">{error}</Text>
-          )}
+      <Flex gap={16} vertical>
+        {loading === StatusLoading.REJECTED && error && (
+          <Text type="danger">{error}</Text>
+        )}
+        {userProfile && (
           <List
             size="large"
             bordered
@@ -63,16 +88,16 @@ export const UserProfilePage: FC = () => {
               );
             }}
           />
-          <Flex gap={12}>
-            <Button onClick={goBack} color="primary" variant="solid">
-              Назад
-            </Button>
-            <Button onClick={handleOpenModal} color="cyan" variant="solid">
-              Редактировать
-            </Button>
-          </Flex>
+        )}
+        <Flex gap={12}>
+          <Button onClick={goBack} color="primary" variant="solid">
+            Назад
+          </Button>
+          <Button onClick={handleOpenModal} color="cyan" variant="solid">
+            Редактировать
+          </Button>
         </Flex>
-      )}
+      </Flex>
       {userProfile && (
         <ModalUpdateUser
           userProfile={userProfile}

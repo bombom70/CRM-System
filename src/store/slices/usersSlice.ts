@@ -1,16 +1,15 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Meta, MetaResponse, User, UserFilters } from '../../api/users/types';
 import {
-  Meta,
-  MetaResponse,
-  User,
-  UserFilters,
-  UserRequest,
-} from '../../api/users/types';
-import { fetchGetProfileUser, fetchUsers } from '../../api/users/users';
+  fetchGetProfileUser,
+  fetchUpdateProfileUser,
+  fetchUsers,
+} from '../../api/users/users';
 import { httpClient } from '../../api/httpClient';
 import axios from 'axios';
 import { PAGE_SIZE } from '../../shared/constants';
 import { StatusLoading } from '../../shared/types';
+import { formateDate } from '../../shared/utils';
 
 export interface AuthState {
   users: User[];
@@ -63,13 +62,13 @@ export const getProfileUser = createAsyncThunk<User, string>(
 
 export const updateProfileUser = createAsyncThunk<
   User,
-  UserRequest & { id: string },
+  Record<string, string>,
   { rejectValue: { message: string } }
 >('users/fetchUpdateProfileUser', async (userData, { rejectWithValue }) => {
   try {
-    const { id, ...data } = userData;
-    const res = await httpClient.put(`/admin/users/${id}`, data);
-    return res.data;
+    const res = await fetchUpdateProfileUser(userData);
+    await fetchGetProfileUser(userData.id);
+    return res;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       return rejectWithValue({
@@ -111,6 +110,7 @@ export const usersSlice = createSlice({
         state.users = (action.payload.data ?? []).map((u) => ({
           ...u,
           key: u.id,
+          date: formateDate(u.date),
         }));
         state.meta = action.payload.meta;
         state.error = null;
@@ -126,7 +126,7 @@ export const usersSlice = createSlice({
       })
       .addCase(getProfileUser.fulfilled, (state, action) => {
         state.loading = StatusLoading.FULFILLED;
-        state.userProfile = action.payload;
+        state.userProfile = action?.payload;
         state.error = null;
       })
       .addCase(getProfileUser.rejected, (state, action) => {
@@ -140,7 +140,7 @@ export const usersSlice = createSlice({
       })
       .addCase(updateProfileUser.fulfilled, (state, action) => {
         state.loading = StatusLoading.FULFILLED;
-        state.userProfile = action.payload;
+        state.userProfile = action?.payload;
         state.error = null;
       })
       .addCase(updateProfileUser.rejected, (state, action) => {
