@@ -73,7 +73,7 @@ export const UserProfilePage: FC = () => {
         {loading === StatusLoading.REJECTED && error && (
           <Text type="danger">{error}</Text>
         )}
-        {userProfile && (
+        {loading === StatusLoading.FULFILLED && userProfile && (
           <List
             size="large"
             bordered
