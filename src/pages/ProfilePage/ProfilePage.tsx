@@ -4,8 +4,9 @@ import { useAppDispatch, useAppSelector } from '../../store';
 import { Button, List } from 'antd';
 import { useNavigate } from 'react-router';
 import { tokenStore } from '../../api/TokenStore';
-import { fetchLogout, fetchRefresh } from '../../api/profile/profile';
+import { fetchLogout } from '../../api/profile/profile';
 import { StatusLoading } from '../../shared/types';
+import { refreshTokens } from '../../shared/refreshTokens';
 
 const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
@@ -28,25 +29,11 @@ export const ProfilePage: FC = () => {
     }
   };
 
-  const refreshTokens = async (refreshToken: string) => {
-    try {
-      const newTokens = await fetchRefresh({ refreshToken });
-      tokenStore.setAccess(newTokens.accessToken);
-      tokenStore.setRefresh(newTokens.refreshToken);
-      dispatch(getProfileData());
-    } catch (error) {
-      tokenStore.clear();
-      localStorage.removeItem('isAdmin');
-      navigate('/auth/login');
-      throw error;
-    }
-  };
-
   useEffect(() => {
     const refreshToken = tokenStore.getRefresh() ?? '';
 
     if (!accessToken) {
-      refreshTokens(refreshToken);
+      refreshTokens(refreshToken, () => dispatch(getProfileData()));
       return;
     }
 

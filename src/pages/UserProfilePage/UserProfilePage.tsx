@@ -7,7 +7,7 @@ import { ModalUpdateUser } from '../../components/ModalUpdateUser';
 import { StatusLoading } from '../../shared/types';
 import { excludeKeys } from '../../shared/constants';
 import { tokenStore } from '../../api/TokenStore';
-import { fetchRefresh } from '../../api/profile/profile';
+import { refreshTokens } from '../../shared/refreshTokens';
 
 export const UserProfilePage: FC = () => {
   const { id } = useParams();
@@ -36,27 +36,11 @@ export const UserProfilePage: FC = () => {
 
   const accessToken = tokenStore.getAccess() ?? '';
 
-  const refreshTokens = async (refreshToken: string) => {
-    try {
-      const newTokens = await fetchRefresh({ refreshToken });
-      tokenStore.setAccess(newTokens.accessToken);
-      tokenStore.setRefresh(newTokens.refreshToken);
-      if (id) {
-        dispatch(getProfileUser(id));
-      }
-    } catch (error) {
-      tokenStore.clear();
-      localStorage.removeItem('isAdmin');
-      navigate('/auth/login');
-      throw error;
-    }
-  };
-
   useEffect(() => {
     const refreshToken = tokenStore.getRefresh() ?? '';
 
-    if (!accessToken) {
-      refreshTokens(refreshToken);
+    if (!accessToken && id) {
+      refreshTokens(refreshToken, () => dispatch(getProfileUser(id)));
       return;
     }
     if (id) {
