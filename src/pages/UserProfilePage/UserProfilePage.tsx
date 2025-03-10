@@ -1,22 +1,16 @@
-import { FC, useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { FC, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { getProfileUser } from '../../store/slices/usersSlice';
-import { List, Button, Flex, Typography } from 'antd';
+import { List, Button, Flex } from 'antd';
 import { ModalUpdateUser } from '../../components/ModalUpdateUser';
-import { StatusLoading } from '../../shared/types';
 import { excludeKeys } from '../../shared/constants';
-import { tokenStore } from '../../api/TokenStore';
-import { refreshTokens } from '../../shared/refreshTokens';
+import { usersApi } from '../../api/users/api';
+import { skipToken } from '@reduxjs/toolkit/query';
 
 export const UserProfilePage: FC = () => {
   const { id } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { userProfile, loading, error } = useAppSelector(
-    (state) => state.users
-  );
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+  const { data, isLoading } = usersApi.useGetUserQuery(id ?? skipToken);
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -34,34 +28,15 @@ export const UserProfilePage: FC = () => {
     navigate('/users');
   };
 
-  const accessToken = tokenStore.getAccess() ?? '';
-
-  useEffect(() => {
-    const refreshToken = tokenStore.getRefresh() ?? '';
-
-    if (!accessToken && id) {
-      refreshTokens(refreshToken, () => dispatch(getProfileUser(id)));
-      return;
-    }
-    if (id) {
-      dispatch(getProfileUser(id));
-    }
-  }, [id]);
-
-  const { Text } = Typography;
-
   return (
     <>
-      {loading === StatusLoading.PENDING && <h1>Загрузка...</h1>}
+      {isLoading && <h1>Загрузка...</h1>}
       <Flex gap={16} vertical>
-        {loading === StatusLoading.REJECTED && error && (
-          <Text type="danger">{error}</Text>
-        )}
-        {userProfile && (
+        {data && (
           <List
             size="large"
             bordered
-            dataSource={Object.entries(userProfile).filter(
+            dataSource={Object.entries(data).filter(
               ([key]) => !excludeKeys.includes(key)
             )}
             renderItem={([key, val]) => {
@@ -82,9 +57,9 @@ export const UserProfilePage: FC = () => {
           </Button>
         </Flex>
       </Flex>
-      {userProfile && (
+      {data && (
         <ModalUpdateUser
-          userProfile={userProfile}
+          userProfile={data}
           isOpen={isModalOpen}
           handleCancel={handleCancel}
           handleOk={handleOk}

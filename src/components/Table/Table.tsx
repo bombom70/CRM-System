@@ -12,37 +12,27 @@ import { Roles } from '../../api/profile/types';
 import { User, UserFilters } from '../../api/users/types';
 import { Link } from 'react-router';
 import { ModalDeleteUser } from './ModalDeleteUser';
-import {
-  deleteUser,
-  getUsersData,
-  setFitlers,
-} from '../../store/slices/usersSlice';
-import { useAppDispatch } from '../../store';
 import { debounce } from '../../shared/debounce';
 import { PAGE_SIZE } from '../../shared/constants';
-import { StatusLoading } from '../../shared/types';
-import {
-  fetchBlockUser,
-  fetchUnblockUser,
-  fetchUpdateRolesUser,
-} from '../../api/users/users';
 import { Filter } from './Filter';
-
-type Props = {
-  users: User[];
-  totalAmount: number;
-  loading: StatusLoading;
-};
+import { usersApi } from '../../api/users/api';
 
 type ModelType = 'delete' | 'block' | 'roles';
 
-export const Table: FC<Props> = ({ users, totalAmount, loading }) => {
+export const Table: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState<User>({} as User);
   const [currentPage, setCurrentPage] = useState(1);
+  const [filter, setFilter] = useState<UserFilters>({});
   const [modelType, setModelType] = useState<ModelType>('block');
-
-  const dispatch = useAppDispatch();
+  const [deleteUser] = usersApi.useDeleteUserMutation();
+  const [changeRole] = usersApi.useChangeRoleMutation();
+  const [changeBlockUser] = usersApi.useChangeBlockUserMutation();
+  const {
+    data: users,
+    isLoading,
+    isFetching,
+  } = usersApi.useGetUsersQuery(filter);
 
   const handleCancel = () => {
     setIsModalOpen(false);
@@ -51,20 +41,18 @@ export const Table: FC<Props> = ({ users, totalAmount, loading }) => {
   const handleOk = async () => {
     try {
       if (modelType === 'delete') {
-        await dispatch(deleteUser(user.id));
+        await deleteUser(String(user.id));
       } else if (modelType === 'block') {
-        if (user.isBlocked) {
-          await fetchUnblockUser(user.id);
-        } else {
-          await fetchBlockUser(user.id);
-        }
+        await changeBlockUser({
+          userId: String(user.id),
+          isBlocked: user.isBlocked,
+        });
       } else if (modelType === 'roles') {
         const roles = user.roles?.includes(Roles.ADMIN)
           ? user.roles?.filter((role) => role !== Roles.ADMIN)
           : [...user.roles, Roles.ADMIN];
-        await fetchUpdateRolesUser({ roles }, user.id);
+        await changeRole({ id: String(user.id), roles });
       }
-      await dispatch(getUsersData({}));
     } catch (error) {
       throw error;
     }
@@ -192,16 +180,21 @@ export const Table: FC<Props> = ({ users, totalAmount, loading }) => {
 
     newFilters.limit = PAGE_SIZE;
     newFilters.offset = pagination.current ? pagination.current - 1 : 0;
-    dispatch(setFitlers(newFilters));
+    setFilter((prev) => ({ ...prev, ...newFilters }));
   };
 
   const handleChange = debounce(({ target }: ChangeEvent<HTMLInputElement>) => {
     setCurrentPage(1);
-    dispatch(setFitlers({ search: target.value, limit: PAGE_SIZE, offset: 0 }));
+    setFilter((prev) => ({
+      ...prev,
+      search: target.value,
+      limit: PAGE_SIZE,
+      offset: 0,
+    }));
   }, 500);
 
   const handleChangeStatusFilter = (isBlocked: boolean | null) => {
-    dispatch(setFitlers({ isBlocked }));
+    setFilter((prev) => ({ ...prev, isBlocked }));
   };
 
   return (
@@ -216,21 +209,21 @@ export const Table: FC<Props> = ({ users, totalAmount, loading }) => {
       </Flex>
       <AntTable<User>
         columns={columns}
-        dataSource={users}
+        dataSource={users?.data}
         onChange={handleTableChange}
         scroll={{ x: 'max-content' }}
         style={{ width: '100%' }}
         pagination={
-          totalAmount > 20 && {
+          (users?.meta.totalAmount ?? 0) > PAGE_SIZE && {
             pageSize: PAGE_SIZE,
             current: currentPage,
-            total: totalAmount,
+            total: users?.meta.totalAmount,
             onChange: (page) => {
               setCurrentPage(page);
             },
           }
         }
-        loading={loading === StatusLoading.PENDING}
+        loading={isLoading || isFetching}
       />
       <ModalDeleteUser
         isOpen={isModalOpen}

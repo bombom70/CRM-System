@@ -1,9 +1,8 @@
-import { FC } from 'react';
-import { Form, Input, Modal } from 'antd';
-import { useAppDispatch } from '../store';
-import { User } from '../api/users/types';
-import { updateProfileUser } from '../store/slices/usersSlice';
+import { FC, useState } from 'react';
+import { Form, Input, Modal, Typography } from 'antd';
+import { User, UserRequest } from '../api/users/types';
 import { excludeKeys } from '../shared/constants';
+import { usersApi } from '../api/users/api';
 
 type Props = {
   userProfile: User;
@@ -18,11 +17,11 @@ const makeUserData = (userProfile: User, formData: Record<string, string>) => {
     .reduce(
       (acc, [key, val]) => {
         if (formData[key] !== val) {
-          acc[key] = formData[key];
+          acc[key as keyof UserRequest] = formData[key];
         }
         return acc;
       },
-      { id: String(userProfile.id) } as Record<string, string>
+      { id: String(userProfile.id) } as UserRequest
     );
 };
 
@@ -33,7 +32,8 @@ export const ModalUpdateUser: FC<Props> = ({
   handleCancel,
 }) => {
   const [form] = Form.useForm();
-  const dispatch = useAppDispatch();
+  const [updateUserError, setUpdateUserError] = useState('');
+  const [updateUser] = usersApi.useUpdateUserMutation();
 
   const handleFinished = async () => {
     try {
@@ -44,8 +44,13 @@ export const ModalUpdateUser: FC<Props> = ({
         return;
       }
 
-      await dispatch(updateProfileUser(userData));
-      form.resetFields();
+      const result = await updateUser(userData);
+
+      if (result?.error && 'data' in result.error) {
+        setUpdateUserError(String(result.error.data));
+        return;
+      }
+      setUpdateUserError('');
       handleOk();
     } catch (error) {
       throw error;
@@ -58,8 +63,11 @@ export const ModalUpdateUser: FC<Props> = ({
       email: userProfile.email,
       phoneNumber: userProfile.phoneNumber,
     });
+    setUpdateUserError('');
     handleCancel();
   };
+
+  const { Text } = Typography;
 
   return (
     <Modal
@@ -87,6 +95,7 @@ export const ModalUpdateUser: FC<Props> = ({
         <Form.Item name="phoneNumber">
           <Input placeholder="Введите номер телефона" />
         </Form.Item>
+        {updateUserError && <Text type="danger">{updateUserError}</Text>}
       </Form>
     </Modal>
   );

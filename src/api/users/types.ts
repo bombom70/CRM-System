@@ -4,7 +4,7 @@ export interface UserFilters {
   search?: string;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
-  isBlocked?: boolean;
+  isBlocked?: boolean | null;
   limit?: number; // сколько на странице
   offset?: number; // страницу
 }
@@ -31,10 +31,12 @@ export interface MetaResponse<T> {
 }
 
 export interface UserRequest {
+  id: string;
   username?: string;
   email?: string;
   phoneNumber?: string;
 }
+
 export interface UserRolesRequest {
   roles: Roles[];
 }

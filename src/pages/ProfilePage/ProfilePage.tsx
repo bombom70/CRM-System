@@ -29,14 +29,18 @@ export const ProfilePage: FC = () => {
     }
   };
 
+  const getProfile = async (refreshToken: string) => {
+    await refreshTokens(refreshToken);
+    dispatch(getProfileData());
+  };
+
   useEffect(() => {
     const refreshToken = tokenStore.getRefresh() ?? '';
 
     if (!accessToken) {
-      refreshTokens(refreshToken, () => dispatch(getProfileData()));
+      getProfile(refreshToken);
       return;
     }
-
     dispatch(getProfileData());
   }, []);
 
