@@ -28,7 +28,7 @@ export const usersApi = baseApi.injectEndpoints({
       }),
       providesTags: ['Users'],
     }),
-    updateUser: build.mutation<User, UserRequest>({
+    updateUser: build.mutation<User, UserRequest & { id: string }>({
       query: (user) => {
         const { id, ...body } = user;
         return {

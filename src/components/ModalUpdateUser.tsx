@@ -12,17 +12,19 @@ type Props = {
 };
 
 const makeUserData = (userProfile: User, formData: Record<string, string>) => {
-  return Object.entries(userProfile)
+  const result = Object.entries(userProfile)
     .filter(([key]) => !excludeKeys.includes(key))
-    .reduce(
-      (acc, [key, val]) => {
-        if (formData[key] !== val) {
-          acc[key as keyof UserRequest] = formData[key];
-        }
-        return acc;
-      },
-      { id: String(userProfile.id) } as UserRequest
-    );
+    .reduce((acc, [key, val]) => {
+      if (formData[key] !== val) {
+        acc[key as keyof UserRequest] = formData[key];
+      }
+      return acc;
+    }, {} as UserRequest);
+
+  return {
+    id: String(userProfile.id),
+    ...result,
+  };
 };
 
 export const ModalUpdateUser: FC<Props> = ({

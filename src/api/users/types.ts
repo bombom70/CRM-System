@@ -31,7 +31,7 @@ export interface MetaResponse<T> {
 }
 
 export type UserRequest = Partial<
-  Pick<User, 'username' | 'email' | 'phoneNumber' | 'id'>
+  Pick<User, 'username' | 'email' | 'phoneNumber'>
 >;
 
 export interface UserRolesRequest {
