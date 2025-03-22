@@ -8,7 +8,6 @@ export const refreshTokens = async (refreshToken: string) => {
     tokenStore.setRefresh(newTokens.refreshToken);
   } catch (error) {
     tokenStore.clear();
-    localStorage.removeItem('isAdmin');
     window.location.replace('/auth/login');
     throw error;
   }

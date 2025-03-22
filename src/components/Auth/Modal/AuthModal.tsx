@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Modal as AntModal } from 'antd';
+import { Modal } from 'antd';
 
 type Props = {
   title: string;
@@ -8,7 +8,7 @@ type Props = {
   children: string | JSX.Element;
 };
 
-export const Modal: FC<Props> = ({
+export const AuthModal: FC<Props> = ({
   title,
   isOpen,
   children,
@@ -23,7 +23,7 @@ export const Modal: FC<Props> = ({
   };
 
   return (
-    <AntModal
+    <Modal
       title={title}
       open={isOpen}
       onOk={handleOk}
@@ -31,6 +31,6 @@ export const Modal: FC<Props> = ({
       footer={null}
     >
       {children}
-    </AntModal>
+    </Modal>
   );
 };

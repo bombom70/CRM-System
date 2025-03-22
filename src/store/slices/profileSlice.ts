@@ -6,6 +6,7 @@ import { StatusLoading } from '../../shared/types';
 export interface AuthState {
   profileData: Profile | null;
   isAuth: boolean;
+  isAdmin: boolean;
   loading: StatusLoading;
   error: string | null;
 }
@@ -18,6 +19,7 @@ export const getProfileData = createAsyncThunk<Profile, undefined>(
 const initialState: AuthState = {
   profileData: null,
   isAuth: false,
+  isAdmin: false,
   loading: StatusLoading.IDLE,
   error: null,
 };
@@ -25,6 +27,11 @@ const initialState: AuthState = {
 export const profileSlice = createSlice({
   name: 'profile',
   initialState,
+  selectors: {
+    isAdmin(state) {
+      return state.profileData?.roles.includes(Roles.ADMIN);
+    },
+  },
   reducers: {
     changeAuth(state, { payload }) {
       state.isAuth = payload;
@@ -35,24 +42,22 @@ export const profileSlice = createSlice({
       .addCase(getProfileData.pending, (state) => {
         state.loading = StatusLoading.PENDING;
         state.error = null;
-        localStorage.setItem('isAdmin', String(false));
       })
       .addCase(getProfileData.fulfilled, (state, action) => {
         state.loading = StatusLoading.FULFILLED;
         state.profileData = action.payload;
-        const isAdmin = action.payload.roles?.includes(Roles.ADMIN);
-        localStorage.setItem('isAdmin', String(isAdmin));
         state.error = null;
+        state.isAdmin = state.profileData?.roles.includes(Roles.ADMIN) ?? false;
       })
       .addCase(getProfileData.rejected, (state, action) => {
         state.loading = StatusLoading.REJECTED;
         state.profileData = null;
         state.error = action.error.message as string;
-        localStorage.setItem('isAdmin', String(false));
       });
   },
 });
 
 export const { changeAuth } = profileSlice.actions;
+export const { isAdmin } = profileSlice.selectors;
 
 export default profileSlice.reducer;

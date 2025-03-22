@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Table } from '../../components/Table';
+import { UsersTable } from '../../components/UsersTable';
 import { Typography } from 'antd';
 
 export const UsersPage: FC = () => {
@@ -8,7 +8,7 @@ export const UsersPage: FC = () => {
   return (
     <>
       <Title level={2}>Пользователи</Title>
-      <Table />
+      <UsersTable />
     </>
   );
 };

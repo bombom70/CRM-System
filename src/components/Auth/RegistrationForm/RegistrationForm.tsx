@@ -2,11 +2,12 @@ import { FC, useState } from 'react';
 import { Form, Button, Input, Flex, FormProps, Typography } from 'antd';
 import { fetchSignup } from '../../../api/profile/profile';
 import axios from 'axios';
-import { Modal } from '../Modal';
+import { AuthModal } from '../Modal';
 import { Link } from 'react-router';
 import { UserRegistration } from '../../../api/profile/types';
+import { MAX_SYMBOL, MIN_SYMBOL } from '../../../shared/constants';
 
-type FieldType = UserRegistration & { repeatPassword: string };
+type FieldsType = UserRegistration & { repeatPassword: string };
 
 export const RegistrationForm: FC = () => {
   const [form] = Form.useForm();
@@ -14,7 +15,7 @@ export const RegistrationForm: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleFinished: FormProps<FieldType>['onFinish'] = async (
+  const handleFinished: FormProps<FieldsType>['onFinish'] = async (
     valuesForm
   ) => {
     try {
@@ -48,7 +49,7 @@ export const RegistrationForm: FC = () => {
         disabled={formDisabled}
       >
         <Flex vertical>
-          <Form.Item<FieldType>
+          <Form.Item<FieldsType>
             label="Имя пользователя"
             name="username"
             rules={[
@@ -58,7 +59,10 @@ export const RegistrationForm: FC = () => {
               },
               { whitespace: true },
               { min: 1, message: 'Минимальное количество символов 1' },
-              { max: 60, message: 'Максимальное количество символов 60' },
+              {
+                max: MAX_SYMBOL,
+                message: 'Максимальное количество символов 60',
+              },
               () => ({
                 validator(_, value) {
                   const regex = /^[a-zA-Zа-яА-Я]+$/;
@@ -76,7 +80,7 @@ export const RegistrationForm: FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item<FieldType>
+          <Form.Item<FieldsType>
             label="Логин"
             name="login"
             rules={[
@@ -86,7 +90,10 @@ export const RegistrationForm: FC = () => {
               },
               { whitespace: true },
               { min: 2, message: 'Минимальное количество символов 2' },
-              { max: 60, message: 'Максимальное количество символов 60' },
+              {
+                max: MAX_SYMBOL,
+                message: 'Максимальное количество символов 60',
+              },
               () => ({
                 validator(_, value) {
                   const regex = /^[a-zA-Z]+$/;
@@ -102,7 +109,7 @@ export const RegistrationForm: FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item<FieldType>
+          <Form.Item<FieldsType>
             label="Пароль"
             name="password"
             rules={[
@@ -111,13 +118,16 @@ export const RegistrationForm: FC = () => {
                 message: 'Обязательное поле',
               },
               { whitespace: true },
-              { min: 6, message: 'Минимальное количество символов 6' },
-              { max: 60, message: 'Максимальное количество символов 60' },
+              { min: MIN_SYMBOL, message: 'Минимальное количество символов 6' },
+              {
+                max: MAX_SYMBOL,
+                message: 'Максимальное количество символов 60',
+              },
             ]}
           >
             <Input type="password" />
           </Form.Item>
-          <Form.Item<FieldType>
+          <Form.Item<FieldsType>
             label="Повторите пароль"
             name="repeatPassword"
             dependencies={['password']}
@@ -138,7 +148,7 @@ export const RegistrationForm: FC = () => {
           >
             <Input type="password" />
           </Form.Item>
-          <Form.Item<FieldType>
+          <Form.Item<FieldsType>
             label="Email"
             name="email"
             rules={[
@@ -151,7 +161,7 @@ export const RegistrationForm: FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item<FieldType>
+          <Form.Item<FieldsType>
             label="Телефон"
             name="phoneNumber"
             rules={[
@@ -172,7 +182,7 @@ export const RegistrationForm: FC = () => {
           >
             <Input type="tel" />
           </Form.Item>
-          <Form.Item<FieldType>>
+          <Form.Item<FieldsType>>
             <Flex gap={4}>
               <Button
                 style={{ background: '#7F265B' }}
@@ -186,7 +196,7 @@ export const RegistrationForm: FC = () => {
           </Form.Item>
         </Flex>
       </Form>
-      <Modal
+      <AuthModal
         isOpen={isModalOpen}
         title="Регистрация прошла успешно!"
         setIsModalOpen={setIsModalOpen}
@@ -195,7 +205,7 @@ export const RegistrationForm: FC = () => {
           Перейдите на страницу <Link to="/auth/login"> авторизации </Link> для
           входа в систему
         </p>
-      </Modal>
+      </AuthModal>
     </>
   );
 };

@@ -11,14 +11,11 @@ export const fetchData = async (
   status: TodosStatus
 ): Promise<MetaResponse<Todo, TodoInfo>> => {
   try {
-    const { data, statusText } = await httpClient('/todos', {
+    const { data } = await httpClient('/todos', {
       params: {
         filter: status,
       },
     });
-    if (statusText.toLocaleLowerCase() !== 'ok') {
-      throw new Error(statusText);
-    }
     return data;
   } catch (error) {
     throw error;
@@ -27,10 +24,7 @@ export const fetchData = async (
 
 export const fetchAddTodo = async (todo: TodoRequest): Promise<Todo> => {
   try {
-    const { data, statusText } = await httpClient.post('/todos', todo);
-    if (statusText.toLocaleLowerCase() !== 'ok') {
-      throw new Error(statusText);
-    }
+    const { data } = await httpClient.post('/todos', todo);
     return data;
   } catch (error) {
     throw error;
@@ -42,10 +36,7 @@ export const fetchEditTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const { data, statusText } = await httpClient.put(`/todos/${id}`, todo);
-    if (statusText.toLocaleLowerCase() !== 'ok') {
-      throw new Error(statusText);
-    }
+    const { data } = await httpClient.put(`/todos/${id}`, todo);
     return data;
   } catch (error) {
     throw error;
@@ -54,10 +45,7 @@ export const fetchEditTodo = async (
 
 export const fetchDeleteTodo = async (id: number) => {
   try {
-    const { statusText } = await httpClient.delete(`/todos/${id}`);
-    if (statusText.toLocaleLowerCase() !== 'ok') {
-      throw new Error(statusText);
-    }
+    await httpClient.delete(`/todos/${id}`);
   } catch (error) {
     throw error;
   }
@@ -68,10 +56,7 @@ export const fetchDoneTodo = async (
   todo: TodoRequest
 ): Promise<Todo> => {
   try {
-    const { data, statusText } = await httpClient.put(`/todos/${id}`, todo);
-    if (statusText.toLocaleLowerCase() !== 'ok') {
-      throw new Error(statusText);
-    }
+    const { data } = await httpClient.put(`/todos/${id}`, todo);
     return data;
   } catch (error) {
     throw error;

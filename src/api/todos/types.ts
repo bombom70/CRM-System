@@ -1,7 +1,4 @@
-export interface TodoRequest {
-  title?: string;
-  isDone?: boolean;
-}
+export type TodoRequest = Partial<Pick<Todo, 'title' | 'isDone'>>;
 
 export interface Todo {
   id: string;

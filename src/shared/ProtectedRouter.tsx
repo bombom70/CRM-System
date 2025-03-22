@@ -1,8 +1,21 @@
 import { FC } from 'react';
 import { Navigate, Outlet } from 'react-router';
-import { useIsAdmin } from './utils';
+import { useAppSelector } from '../store';
+import { isAdmin } from '../store/slices/profileSlice';
+import { StatusLoading } from './types';
+import { Skeleton } from 'antd';
 
 export const ProtectedRouter: FC = () => {
-  const isAdmin = useIsAdmin();
-  return isAdmin ? <Outlet /> : <Navigate to="/" />;
+  const loading = useAppSelector((state) => state.profile.loading);
+  const isAdminRole = useAppSelector(isAdmin);
+
+  if (loading === StatusLoading.PENDING) {
+    return <Skeleton active />;
+  }
+
+  if (loading === StatusLoading.FULFILLED && !isAdminRole) {
+    return <Navigate to="/" replace />;
+  }
+
+  return isAdminRole && <Outlet />;
 };

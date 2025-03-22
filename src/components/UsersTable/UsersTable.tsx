@@ -1,13 +1,5 @@
 import { ChangeEvent, FC, useState } from 'react';
-import {
-  Table as AntTable,
-  Button,
-  Flex,
-  Input,
-  Space,
-  TableProps,
-  Tag,
-} from 'antd';
+import { Table, Button, Flex, Input, Space, TableProps, Tag } from 'antd';
 import { Roles } from '../../api/profile/types';
 import { User, UserFilters } from '../../api/users/types';
 import { Link } from 'react-router';
@@ -16,10 +8,11 @@ import { debounce } from '../../shared/debounce';
 import { PAGE_SIZE } from '../../shared/constants';
 import { Filter } from './Filter';
 import { usersApi } from '../../api/users/api';
+import { formateDate } from '../../shared/utils';
 
 type ModelType = 'delete' | 'block' | 'roles';
 
-export const Table: FC = () => {
+export const UsersTable: FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [user, setUser] = useState<User>({} as User);
   const [currentPage, setCurrentPage] = useState(1);
@@ -127,6 +120,7 @@ export const Table: FC = () => {
       title: 'Дата регистр',
       dataIndex: 'date',
       key: 'date',
+      render: (_, user) => <>{formateDate(user.date)}</>,
     },
     {
       title: '',
@@ -207,7 +201,7 @@ export const Table: FC = () => {
         />
         <Filter onSelectFilter={handleChangeStatusFilter} />
       </Flex>
-      <AntTable<User>
+      <Table<User>
         columns={columns}
         dataSource={users?.data}
         onChange={handleTableChange}

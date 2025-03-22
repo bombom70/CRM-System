@@ -30,12 +30,9 @@ export interface MetaResponse<T> {
   meta: Meta;
 }
 
-export interface UserRequest {
-  id: string;
-  username?: string;
-  email?: string;
-  phoneNumber?: string;
-}
+export type UserRequest = Partial<
+  Pick<User, 'username' | 'email' | 'phoneNumber' | 'id'>
+>;
 
 export interface UserRolesRequest {
   roles: Roles[];

@@ -1,12 +1,10 @@
-import { FC, useEffect } from 'react';
-import { getProfileData } from '../../store/slices/profileSlice';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { FC } from 'react';
+import { useAppSelector } from '../../store';
 import { Button, List } from 'antd';
 import { useNavigate } from 'react-router';
 import { tokenStore } from '../../api/TokenStore';
 import { fetchLogout } from '../../api/profile/profile';
 import { StatusLoading } from '../../shared/types';
-import { refreshTokens } from '../../shared/refreshTokens';
 
 const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
@@ -15,34 +13,16 @@ export const ProfilePage: FC = () => {
     (state) => state.profile
   );
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const accessToken = tokenStore.getAccess() ?? '';
 
   const handleLogout = async () => {
     try {
       await fetchLogout();
-      localStorage.removeItem('isAdmin');
       tokenStore.clear();
       navigate('/auth/login');
     } catch (error) {
       throw error;
     }
   };
-
-  const getProfile = async (refreshToken: string) => {
-    await refreshTokens(refreshToken);
-    dispatch(getProfileData());
-  };
-
-  useEffect(() => {
-    const refreshToken = tokenStore.getRefresh() ?? '';
-
-    if (!accessToken) {
-      getProfile(refreshToken);
-      return;
-    }
-    dispatch(getProfileData());
-  }, []);
 
   return (
     <>

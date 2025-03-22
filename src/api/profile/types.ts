@@ -31,15 +31,12 @@ export interface Profile {
   phoneNumber: string;
 }
 
-export interface ProfileRequest {
-  username: string;
-  email: string;
-  phoneNumber: string;
-}
+export type ProfileRequest = Pick<
+  Profile,
+  'username' | 'email' | 'phoneNumber'
+>;
 
-export interface PasswordRequest {
-  password: string;
-}
+export type PasswordRequest = Pick<UserRegistration, 'password'>;
 
 export interface Token {
   accessToken: string;
