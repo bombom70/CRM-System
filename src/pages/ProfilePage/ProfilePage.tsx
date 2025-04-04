@@ -1,48 +1,28 @@
-import { FC, useEffect } from 'react';
-import { getProfileData, StatusLoading } from '../../store/slices/profileSlice';
-import { useAppDispatch, useAppSelector } from '../../store';
+import { FC } from 'react';
+import { useAppSelector } from '../../store';
 import { Button, List } from 'antd';
-import { fetchLogout, fetchRefresh } from '../../api/user';
 import { useNavigate } from 'react-router';
 import { tokenStore } from '../../api/TokenStore';
+import { fetchLogout } from '../../api/profile/profile';
+import { StatusLoading } from '../../shared/types';
 
 const excludeKeys = ['id', 'date', 'isBlocked', 'roles'];
 
 export const ProfilePage: FC = () => {
-  const { profileData, loading, error } = useAppSelector((state) => state.user);
+  const { profileData, loading, error } = useAppSelector(
+    (state) => state.profile
+  );
   const navigate = useNavigate();
-  const dispatch = useAppDispatch();
-  const accessToken = tokenStore.getAccess() ?? '';
 
   const handleLogout = async () => {
-    await fetchLogout();
-    tokenStore.clear();
-    navigate('/auth/login');
-  };
-
-  const refreshTokens = async (refreshToken: string) => {
     try {
-      const newTokens = await fetchRefresh({ refreshToken });
-      tokenStore.setAccess(newTokens.accessToken);
-      tokenStore.setRefresh(newTokens.refreshToken);
-      dispatch(getProfileData());
-    } catch (error) {
+      await fetchLogout();
       tokenStore.clear();
       navigate('/auth/login');
+    } catch (error) {
       throw error;
     }
   };
-
-  useEffect(() => {
-    const refreshToken = tokenStore.getRefresh() ?? '';
-
-    if (!accessToken) {
-      refreshTokens(refreshToken);
-      return;
-    }
-
-    dispatch(getProfileData());
-  }, []);
 
   return (
     <>

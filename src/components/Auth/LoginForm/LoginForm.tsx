@@ -2,10 +2,11 @@ import { FC, useState } from 'react';
 import axios from 'axios';
 import { Flex, Input, Button, Form, FormProps, Typography } from 'antd';
 import { useNavigate } from 'react-router';
-import { fetchSignin } from '../../../api/user';
-import { tokenStore } from '../../../api/TokenStore';
+import { fetchSignin } from '../../../api/profile/profile';
 import { useAppDispatch } from '../../../store';
-import { changeAuth } from '../../../store/slices/profileSlice';
+import { changeAuth, getProfileData } from '../../../store/slices/profileSlice';
+import { tokenStore } from '../../../api/TokenStore';
+import { MAX_SYMBOL, MIN_SYMBOL } from '../../../shared/constants';
 
 type FieldType = {
   login: string;
@@ -27,6 +28,7 @@ export const LoginForm: FC = () => {
       tokenStore.setRefresh(refreshToken);
       tokenStore.setAccess(accessToken);
       dispatch(changeAuth(true));
+      dispatch(getProfileData());
       setErrorMessage('');
       form.resetFields();
       navigate('/');
@@ -64,7 +66,10 @@ export const LoginForm: FC = () => {
               },
               { whitespace: true },
               { min: 2, message: 'Минимальное количество символов 2' },
-              { max: 60, message: 'Максимальное количество символов 60' },
+              {
+                max: MAX_SYMBOL,
+                message: 'Максимальное количество символов 60',
+              },
             ]}
           >
             <Input />
@@ -78,8 +83,11 @@ export const LoginForm: FC = () => {
                 message: 'Обязательное поле',
               },
               { whitespace: true },
-              { min: 6, message: 'Минимальное количество символов 6' },
-              { max: 60, message: 'Максимальное количество символов 60' },
+              { min: MIN_SYMBOL, message: 'Минимальное количество символов 6' },
+              {
+                max: MAX_SYMBOL,
+                message: 'Максимальное количество символов 60',
+              },
             ]}
           >
             <Input type="password" />

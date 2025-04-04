@@ -1,33 +1,52 @@
-export interface TodoRequest {
-  title?: string;
-  isDone?: boolean;
+export enum StatusLoading {
+  IDLE = 'IDLE',
+  PENDING = 'PENDING',
+  FULFILLED = 'FULFILLED',
+  REJECTED = 'REJECTED',
 }
 
-export interface Todo {
-  id: string;
-  title: string;
-  created: string;
-  isDone: boolean;
+//USER
+
+export interface UserRegistration {
+  login: string;
+  username: string;
+  password: string;
+  email: string;
+  phoneNumber: string;
 }
 
-export interface TodoInfo {
-  all: number;
-  completed: number;
-  inWork: number;
+export interface AuthData {
+  login: string;
+  password: string;
 }
 
-export interface MetaResponse<T, N> {
-  data: T[];
-  info?: N;
-  meta: {
-    totalAmount: number;
-  };
+export interface RefreshToken {
+  refreshToken: string;
 }
 
-export enum TodosStatus {
-  ALL = 'all',
-  COMPLETED = 'completed',
-  IN_WORK = 'inWork',
+export interface Profile {
+  id: number;
+  username: string;
+  email: string;
+  date: string;
+  isBlocked: boolean;
+  isAdmin: boolean;
+  phoneNumber: string;
+}
+
+export interface ProfileRequest {
+  username: string;
+  email: string;
+  phoneNumber: string;
+}
+
+export interface PasswordRequest {
+  password: string;
+}
+
+export interface Token {
+  accessToken: string;
+  refreshToken: string;
 }
 
 //USER

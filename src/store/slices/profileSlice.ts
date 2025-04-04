@@ -1,29 +1,25 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { Profile } from '../../shared/types';
-import { fetchProfile } from '../../api/user';
-
-export enum StatusLoading {
-  IDLE = 'IDLE',
-  PENDING = 'PENDING',
-  FULFILLED = 'FULFILLED',
-  REJECTED = 'REJECTED',
-}
+import { Profile, Roles } from '../../api/profile/types';
+import { fetchProfile } from '../../api/profile/profile';
+import { StatusLoading } from '../../shared/types';
 
 export interface AuthState {
   profileData: Profile | null;
   isAuth: boolean;
+  isAdmin: boolean;
   loading: StatusLoading;
   error: string | null;
 }
 
 export const getProfileData = createAsyncThunk<Profile, undefined>(
-  'profile/fetch',
+  'profile/fetchProfile',
   fetchProfile
 );
 
 const initialState: AuthState = {
   profileData: null,
   isAuth: false,
+  isAdmin: false,
   loading: StatusLoading.IDLE,
   error: null,
 };
@@ -31,6 +27,11 @@ const initialState: AuthState = {
 export const profileSlice = createSlice({
   name: 'profile',
   initialState,
+  selectors: {
+    isAdmin(state) {
+      return state.profileData?.roles.includes(Roles.ADMIN);
+    },
+  },
   reducers: {
     changeAuth(state, { payload }) {
       state.isAuth = payload;
@@ -46,6 +47,7 @@ export const profileSlice = createSlice({
         state.loading = StatusLoading.FULFILLED;
         state.profileData = action.payload;
         state.error = null;
+        state.isAdmin = state.profileData?.roles.includes(Roles.ADMIN) ?? false;
       })
       .addCase(getProfileData.rejected, (state, action) => {
         state.loading = StatusLoading.REJECTED;
@@ -56,5 +58,6 @@ export const profileSlice = createSlice({
 });
 
 export const { changeAuth } = profileSlice.actions;
+export const { isAdmin } = profileSlice.selectors;
 
 export default profileSlice.reducer;
