@@ -11,6 +11,7 @@ export const MainLayout: FC = () => {
     overflow: 'hidden',
     background: '#f3f3f3',
   };
+
   const siderStyle: React.CSSProperties = {
     textAlign: 'center',
     lineHeight: '120px',
